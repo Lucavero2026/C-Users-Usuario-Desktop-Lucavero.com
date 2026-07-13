@@ -17,6 +17,10 @@ import LinkWhatsapp from "./LinkWhatsapp";
 import QrCodeTool from "./QrCodeTool";
 import GeradorDocumentos from "./GeradorDocumentos";
 import Recibo from "./Recibo";
+import DecodificadorJuridiques from "./DecodificadorJuridiques";
+import GeradorContratos from "./GeradorContratos";
+import ConsulteDireitos from "./ConsulteDireitos";
+import Requerimentos from "./Requerimentos";
 
 /** Mapa slug → componente da ferramenta. */
 const TOOLS: Record<string, ComponentType> = {
@@ -36,6 +40,10 @@ const TOOLS: Record<string, ComponentType> = {
   "qr-code": QrCodeTool,
   "gerador-de-documentos": GeradorDocumentos,
   "recibo-online": Recibo,
+  "decodificador-juridiques": DecodificadorJuridiques,
+  "gerador-de-contratos": GeradorContratos,
+  "consulte-seus-direitos": ConsulteDireitos,
+  "requerimentos-e-recursos": Requerimentos,
 };
 
 export function hasTool(slug: string): boolean {

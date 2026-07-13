@@ -18,6 +18,8 @@ export function SearchBar({ autoFocus = false }: { autoFocus?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [aiAnswer, setAiAnswer] = useState("");
   const [placeholder, setPlaceholder] = useState(EXAMPLES[0]);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -43,16 +45,40 @@ export function SearchBar({ autoFocus = false }: { autoFocus?: boolean }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  function submit(e?: React.FormEvent) {
+  async function submit(e?: React.FormEvent) {
     e?.preventDefault();
     const query = q.trim();
     if (!query) return;
-    // Se houver um match local forte, vai direto pra ferramenta.
+    setAiAnswer("");
+    // Match local forte → vai direto pra ferramenta (rápido e sem custo de IA).
     if (results.length > 0) {
       router.push(`/ferramentas/${results[0].slug}`);
       return;
     }
-    router.push(`/busca?q=${encodeURIComponent(query)}`);
+    // Sem match local: pergunta à IA para entender a intenção.
+    setOpen(false);
+    setLoading(true);
+    try {
+      const r = await fetch("/api/busca", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: query }),
+      });
+      const data = await r.json();
+      if (data.action === "open" && data.slug) {
+        router.push(`/ferramentas/${data.slug}`);
+        return;
+      }
+      if (data.action === "answer" && data.answer) {
+        setAiAnswer(data.answer);
+        return;
+      }
+      router.push(`/busca?q=${encodeURIComponent(query)}`);
+    } catch {
+      router.push(`/busca?q=${encodeURIComponent(query)}`);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -79,12 +105,35 @@ export function SearchBar({ autoFocus = false }: { autoFocus?: boolean }) {
           />
           <button
             type="submit"
-            className="focus-ring hidden shrink-0 items-center gap-1 rounded-full bg-brand px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-brand-600 sm:inline-flex"
+            disabled={loading}
+            className="focus-ring hidden shrink-0 items-center gap-1 rounded-full bg-brand px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 sm:inline-flex"
           >
-            Buscar <CornerDownLeft className="h-3.5 w-3.5" />
+            {loading ? (
+              "Pensando…"
+            ) : (
+              <>
+                Buscar <CornerDownLeft className="h-3.5 w-3.5" />
+              </>
+            )}
           </button>
         </div>
       </form>
+
+      {aiAnswer && (
+        <div className="mt-3 flex items-start gap-3 rounded-2xl border border-border bg-surface p-4 text-left shadow-sm">
+          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
+          <div>
+            <p className="text-sm text-foreground">{aiAnswer}</p>
+            <button
+              type="button"
+              onClick={() => router.push(`/busca?q=${encodeURIComponent(q.trim())}`)}
+              className="mt-2 text-xs font-medium text-brand hover:underline"
+            >
+              Ver ferramentas relacionadas →
+            </button>
+          </div>
+        </div>
+      )}
 
       {open && q.trim() && (
         <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-border bg-surface shadow-xl">

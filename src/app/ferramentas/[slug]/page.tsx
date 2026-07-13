@@ -6,6 +6,7 @@ import { SERVICES, getService, servicesByCategory } from "@/lib/services";
 import { ToolShell } from "@/components/ToolShell";
 import { ToolLoader } from "@/components/tools/ToolLoader";
 import { ServiceCard } from "@/components/ServiceCard";
+import { JsonLd, serviceJsonLd } from "@/components/JsonLd";
 
 export function generateStaticParams() {
   return SERVICES.map((s) => ({ slug: s.slug }));
@@ -22,6 +23,7 @@ export async function generateMetadata({
   return {
     title: service.name,
     description: service.description,
+    keywords: [service.name, ...service.keywords],
     alternates: { canonical: `/ferramentas/${service.slug}` },
     openGraph: {
       title: `${service.name} · Lucavero Multiserviços`,
@@ -45,6 +47,7 @@ export default async function FerramentaPage({
 
   return (
     <>
+      <JsonLd data={serviceJsonLd(service)} />
       <ToolShell service={service}>
         {service.status === "live" ? (
           <ToolLoader slug={service.slug} />

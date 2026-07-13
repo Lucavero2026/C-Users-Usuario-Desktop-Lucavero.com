@@ -4,6 +4,7 @@ import { Logo } from "./Logo";
 
 const LEGAL = [
   { href: "/sobre", label: "Sobre" },
+  { href: "/blog", label: "Blog" },
   { href: "/contato", label: "Contato" },
   { href: "/privacidade", label: "Política de Privacidade" },
   { href: "/termos", label: "Termos de Uso" },

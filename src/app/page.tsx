@@ -8,6 +8,7 @@ import {
   SERVICES,
   servicesByCategory,
 } from "@/lib/services";
+import { SORTED_POSTS } from "@/lib/blog";
 
 const CHIPS = [
   { label: "Salário líquido", slug: "salario-liquido" },
@@ -159,6 +160,44 @@ export default function Home() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* BLOG — antes do rodapé */}
+      <section className="border-t border-border bg-surface-muted">
+        <div className="container-page py-14">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">Do nosso blog</h2>
+              <p className="text-sm text-muted">
+                Guias de como usar as ferramentas e acessar seus direitos.
+              </p>
+            </div>
+            <Link
+              href="/blog"
+              className="focus-ring rounded-full px-3 py-1.5 text-sm font-medium text-brand hover:underline"
+            >
+              Ver o blog →
+            </Link>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {SORTED_POSTS.slice(0, 3).map((p) => (
+              <Link
+                key={p.slug}
+                href={`/blog/${p.slug}`}
+                className="focus-ring card group flex flex-col p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <span className="text-3xl">{p.emoji}</span>
+                <span className="mt-3 inline-flex w-fit rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+                  {p.tag}
+                </span>
+                <h3 className="mt-2 font-bold leading-snug group-hover:text-brand">
+                  {p.title}
+                </h3>
+                <p className="mt-1 flex-1 text-sm text-muted">{p.description}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
     </div>

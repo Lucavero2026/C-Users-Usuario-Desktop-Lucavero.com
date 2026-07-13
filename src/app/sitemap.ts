@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { CATEGORIES, SERVICES } from "@/lib/services";
+import { SORTED_POSTS } from "@/lib/blog";
 import { SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -7,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
     "",
     "/ferramentas",
+    "/blog",
     "/sobre",
     "/contato",
     "/privacidade",
@@ -33,5 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: s.status === "live" ? 0.8 : 0.4,
   }));
 
-  return [...staticPages, ...categorias, ...ferramentas];
+  const artigos = SORTED_POSTS.map((p) => ({
+    url: `${SITE.url}/blog/${p.slug}`,
+    lastModified: new Date(p.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...categorias, ...ferramentas, ...artigos];
 }
