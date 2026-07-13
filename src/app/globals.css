@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Lucavero Multiserviços — Design System
+   Homepage limpa (estilo Google) + acentos coloridos por área
+   ============================================================ */
+
+:root {
+  /* Base neutra */
+  --background: #ffffff;
+  --surface: #ffffff;
+  --surface-muted: #f6f8fc;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #e6eaf2;
+  --ring: #6366f1;
+
+  /* Marca */
+  --brand: #4f46e5;
+  --brand-600: #4338ca;
+  --brand-soft: #eef2ff;
+
+  /* Cores por categoria (acentos) */
+  --c-financas: #059669;
+  --c-financas-soft: #ecfdf5;
+  --c-documentos: #4f46e5;
+  --c-documentos-soft: #eef2ff;
+  --c-trabalhista: #d97706;
+  --c-trabalhista-soft: #fffbeb;
+  --c-consultas: #0284c7;
+  --c-consultas-soft: #f0f9ff;
+  --c-utilidades: #7c3aed;
+  --c-utilidades-soft: #f5f3ff;
+  --c-direitos: #e11d48;
+  --c-direitos-soft: #fff1f2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-600: var(--brand-600);
+  --color-brand-soft: var(--brand-soft);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b1120;
+    --surface: #111a2e;
+    --surface-muted: #0e1728;
+    --foreground: #e8edf7;
+    --muted: #94a3b8;
+    --border: #223049;
+    --brand-soft: #1e2547;
+  }
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilitários de marca reutilizáveis */
+.container-page {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Conteúdo de texto (páginas legais / institucionais) */
+.prose-lv h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.prose-lv h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+}
+.prose-lv p {
+  line-height: 1.75;
+  color: var(--muted);
+}
+.prose-lv ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.prose-lv li {
+  line-height: 1.7;
+  color: var(--muted);
+  margin-block: 0.25rem;
+}
+.prose-lv a {
+  color: var(--brand);
+  text-decoration: underline;
+}
+.prose-lv strong {
+  color: var(--foreground);
+}
+
+/* Gradiente sutil de fundo da home */
+.home-glow {
+  background:
+    radial-gradient(60rem 30rem at 15% -10%, rgba(79, 70, 229, 0.10), transparent 60%),
+    radial-gradient(50rem 28rem at 90% 0%, rgba(2, 132, 199, 0.10), transparent 55%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .home-glow {
+    background:
+      radial-gradient(60rem 30rem at 15% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+      radial-gradient(50rem 28rem at 90% 0%, rgba(2, 132, 199, 0.16), transparent 55%);
+  }
+}
