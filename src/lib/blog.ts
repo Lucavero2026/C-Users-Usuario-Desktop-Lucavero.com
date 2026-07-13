@@ -143,6 +143,93 @@ Ficou em dúvida sobre seus direitos? O [Consulte seus direitos](/ferramentas/co
 
 *Conteúdo informativo — não substitui orientação jurídica profissional.*`,
   },
+  {
+    slug: "tarifa-social-energia-eletrica",
+    title: "Tarifa Social: como pagar menos na conta de luz",
+    description:
+      "Famílias de baixa renda têm direito a desconto na energia elétrica. Veja quem tem direito e como pedir.",
+    date: "2026-07-13",
+    emoji: "💡",
+    tag: "Programas sociais",
+    related: ["consulte-seus-direitos"],
+    body: `A **Tarifa Social de Energia Elétrica** é um desconto na conta de luz para famílias de baixa renda. Dependendo do consumo, o abatimento pode ser bem significativo — e muita gente tem direito sem saber.
+
+## Quem tem direito
+
+De forma geral, têm direito:
+- Famílias inscritas no **CadÚnico** com renda de até meio salário mínimo por pessoa;
+- Famílias que recebem o **Benefício de Prestação Continuada (BPC)**;
+- Famílias inscritas no CadÚnico com renda de até três salários mínimos que tenham pessoa com doença que dependa de aparelhos elétricos.
+
+## Como funciona o desconto
+
+O desconto é aplicado por faixas de consumo (em kWh). Quanto menor o consumo, maior o percentual de desconto. Em muitos casos, a inclusão é **automática** para quem já está no CadÚnico — mas vale conferir.
+
+## Como pedir
+
+1. Garanta que sua família está no **CadÚnico** e com os dados atualizados (veja nosso artigo sobre o [CadÚnico](/blog/cadunico-e-programas-sociais)).
+2. Entre em contato com a **distribuidora de energia** da sua região (o telefone está na conta de luz) e informe que quer a Tarifa Social.
+3. Acompanhe a próxima fatura para confirmar o desconto.
+
+*Conteúdo informativo. Confirme as regras atuais com a sua distribuidora e nos canais oficiais.*`,
+  },
+  {
+    slug: "cpf-cnpj-digitos-verificadores",
+    title: "CPF e CNPJ: o que são os dígitos verificadores",
+    description:
+      "Entenda como funciona a validação de CPF e CNPJ e use um gerador e validador gratuito para testes.",
+    date: "2026-07-13",
+    emoji: "🧾",
+    tag: "Ferramentas",
+    related: ["gerador-de-documentos", "consulta-cnpj"],
+    body: `Você já reparou que os dois últimos números do CPF (e do CNPJ) parecem "conferir" o resto? Eles são os **dígitos verificadores** — calculados a partir dos outros números para detectar erros de digitação.
+
+## Para que servem
+
+Quando você digita um CPF ou CNPJ em um site, o sistema recalcula esses dígitos. Se não baterem, ele avisa que o número é inválido — antes mesmo de consultar qualquer base de dados. É uma primeira checagem simples e rápida.
+
+## Ferramenta para desenvolvedores
+
+Se você programa ou testa sistemas, muitas vezes precisa de números **válidos** (que passam na checagem) sem usar dados de pessoas reais. Para isso existe o nosso [gerador e validador de CPF/CNPJ/PIS](/ferramentas/gerador-de-documentos):
+
+- **Gerar**: cria números matematicamente válidos, ideais para preencher formulários de teste.
+- **Validar**: confere se um número tem os dígitos corretos.
+
+> Importante: um número "válido" só significa que os dígitos fecham a conta. **Não** quer dizer que ele pertence a alguém ou está ativo na Receita.
+
+## E para conferir uma empresa de verdade?
+
+Aí o caminho é a [consulta de CNPJ](/ferramentas/consulta-cnpj), que traz razão social, situação cadastral e endereço a partir de dados públicos.`,
+  },
+  {
+    slug: "autonomo-recibo-pix-whatsapp",
+    title: "Autônomo: recibo, Pix e link de WhatsApp em minutos",
+    description:
+      "Ferramentas gratuitas para quem trabalha por conta própria cobrar, receber e comprovar pagamentos.",
+    date: "2026-07-13",
+    emoji: "🧰",
+    tag: "Ferramentas",
+    related: ["recibo-online", "pix-copia-e-cola", "link-whatsapp", "valor-da-hora"],
+    body: `Trabalhar por conta própria é ter que dar conta de tudo: fazer o serviço, cobrar, receber e comprovar. A boa notícia é que dá para resolver a parte burocrática em minutos, de graça.
+
+## 1. Descubra quanto cobrar
+
+Antes de fechar um preço, veja quanto vale a sua hora com base nos seus custos e metas: use a [calculadora de valor da hora](/ferramentas/valor-da-hora).
+
+## 2. Facilite o pagamento com Pix
+
+Gere um [Pix Copia e Cola e um QR Code](/ferramentas/pix-copia-e-cola) com o valor já preenchido. O cliente paga em segundos, sem taxa.
+
+## 3. Mande tudo pelo WhatsApp
+
+Crie um [link direto de WhatsApp](/ferramentas/link-whatsapp) com uma mensagem pronta ("Olá! Segue o Pix do serviço…") e compartilhe onde quiser.
+
+## 4. Comprove com um recibo
+
+Depois que o dinheiro cair, emita um [recibo em PDF](/ferramentas/recibo-online) com valor por extenso e assinatura. Passa profissionalismo e evita mal-entendidos.
+
+Tudo isso é gratuito, sem cadastro e funciona no celular.`,
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

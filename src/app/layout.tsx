@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CookieBanner } from "@/components/CookieBanner";
 import { JsonLd, siteJsonLd } from "@/components/JsonLd";
+import { AdSense } from "@/components/AdSense";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export const metadata: Metadata = {
       "Calculadoras, geradores de documentos, Pix, QR Code e consultas — tudo em um só lugar, de graça.",
   },
   robots: { index: true, follow: true },
+  other: { "google-adsense-account": "ca-pub-2382067115692051" },
 };
 
 export default function RootLayout({
@@ -61,6 +63,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background">
         <JsonLd data={siteJsonLd()} />
+        <AdSense />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
