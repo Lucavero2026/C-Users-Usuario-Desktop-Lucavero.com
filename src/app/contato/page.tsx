@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail } from "lucide-react";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 import { ContatoForm } from "@/components/ContatoForm";
 import { SITE } from "@/lib/site";
 
@@ -31,11 +31,40 @@ export default function ContatoPage() {
             <p className="text-sm font-medium">E-mail</p>
             <a
               href={`mailto:${SITE.email}`}
-              className="text-sm text-brand hover:underline"
+              className="break-all text-sm text-brand hover:underline"
             >
               {SITE.email}
             </a>
           </div>
+
+          <div className="card p-5">
+            <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/15 text-[#128C7E]">
+              <MessageCircle className="h-5 w-5" />
+            </div>
+            <p className="text-sm font-medium">WhatsApp / Celular</p>
+            <a
+              href={`https://wa.me/${SITE.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-brand hover:underline"
+            >
+              {SITE.whatsappDisplay}
+            </a>
+          </div>
+
+          <div className="card p-5">
+            <div className="mb-2 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+              <Phone className="h-5 w-5" />
+            </div>
+            <p className="text-sm font-medium">Telefone fixo</p>
+            <a
+              href={`tel:+${SITE.phone}`}
+              className="text-sm text-brand hover:underline"
+            >
+              {SITE.phoneDisplay}
+            </a>
+          </div>
+
           <div className="card p-5 text-sm text-muted">
             <p className="font-medium text-foreground">{SITE.owner}</p>
             <p className="mt-1">CNPJ {SITE.cnpj}</p>

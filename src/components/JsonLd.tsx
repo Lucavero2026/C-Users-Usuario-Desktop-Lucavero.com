@@ -25,7 +25,17 @@ export function siteJsonLd() {
         url: SITE.url,
         legalName: SITE.owner,
         email: SITE.email,
+        telephone: `+${SITE.phone}`,
         slogan: SITE.slogan,
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "customer support",
+            email: SITE.email,
+            telephone: `+${SITE.whatsapp}`,
+            availableLanguage: "Portuguese",
+          },
+        ],
       },
       {
         "@type": "WebSite",

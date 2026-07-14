@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Mail, MessageCircle, Phone } from "lucide-react";
 import { CATEGORIES } from "@/lib/services";
+import { SITE } from "@/lib/site";
 import { Logo } from "./Logo";
 
 const LEGAL = [
@@ -21,6 +23,34 @@ export function Footer() {
             Um hub de serviços inteligentes para o dia a dia: finanças, documentos,
             trabalho, consultas e direitos — de graça e sem complicação.
           </p>
+          <ul className="mt-5 space-y-2 text-sm">
+            <li>
+              <a
+                href={`https://wa.me/${SITE.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-foreground/80 transition-colors hover:text-brand"
+              >
+                <MessageCircle className="h-4 w-4" /> {SITE.whatsappDisplay}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`tel:+${SITE.phone}`}
+                className="inline-flex items-center gap-2 text-foreground/80 transition-colors hover:text-brand"
+              >
+                <Phone className="h-4 w-4" /> {SITE.phoneDisplay}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="inline-flex items-center gap-2 break-all text-foreground/80 transition-colors hover:text-brand"
+              >
+                <Mail className="h-4 w-4" /> {SITE.email}
+              </a>
+            </li>
+          </ul>
         </div>
 
         <div>
