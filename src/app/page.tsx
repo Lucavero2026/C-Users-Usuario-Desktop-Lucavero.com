@@ -6,9 +6,12 @@ import {
   CATEGORIES,
   LIVE_SERVICES,
   SERVICES,
+  getCategory,
   servicesByCategory,
 } from "@/lib/services";
 import { SORTED_POSTS } from "@/lib/blog";
+
+const FEATURED = SERVICES.filter((s) => s.featured && s.status === "live");
 
 const CHIPS = [
   { label: "Salário líquido", slug: "salario-liquido" },
@@ -57,6 +60,70 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* DESTAQUES — serviços de maior tráfego, com visual próprio */}
+      <section className="container-page pt-4 pb-2">
+        <div className="mb-5 flex items-center gap-2">
+          <span className="text-lg">⭐</span>
+          <h2 className="text-xl font-bold tracking-tight">Serviços em destaque</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURED.map((s) => {
+            const cat = getCategory(s.category);
+            return (
+              <Link
+                key={s.slug}
+                href={`/ferramentas/${s.slug}`}
+                className="focus-ring group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div
+                  className="flex items-center gap-3 p-5"
+                  style={{ background: cat.colorSoft }}
+                >
+                  <span
+                    className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/70 shadow-sm"
+                    style={{ color: cat.color }}
+                  >
+                    <ServiceIcon name={s.icon} className="h-6 w-6" />
+                  </span>
+                  <h3 className="text-lg font-bold text-foreground">{s.name}</h3>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <p className="flex-1 text-sm text-muted">{s.short}</p>
+                  <span
+                    className="mt-4 text-sm font-semibold"
+                    style={{ color: cat.color }}
+                  >
+                    Abrir agora →
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+
+          {/* Card especial: Programas Sociais */}
+          <Link
+            href="/programas-sociais"
+            className="focus-ring group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div className="flex items-center gap-3 bg-rose-100 p-5 dark:bg-rose-950/40">
+              <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/70 text-rose-600 shadow-sm">
+                <ServiceIcon name="HeartHandshake" className="h-6 w-6" />
+              </span>
+              <h3 className="text-lg font-bold text-foreground">Programas sociais</h3>
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <p className="flex-1 text-sm text-muted">
+                CadÚnico, Bolsa Família, Tarifa Social e mais — quem tem direito e
+                como acessar.
+              </p>
+              <span className="mt-4 text-sm font-semibold text-rose-600">
+                Ver o guia →
+              </span>
+            </div>
+          </Link>
         </div>
       </section>
 

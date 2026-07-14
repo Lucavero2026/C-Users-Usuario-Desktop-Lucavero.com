@@ -37,6 +37,8 @@ export interface Service {
   status: ServiceStatus;
   /** usa a API de IA (Claude) */
   ai?: boolean;
+  /** aparece em destaque na home (serviços de maior tráfego) */
+  featured?: boolean;
   /** termos para a busca entender a intenção */
   keywords: string[];
 }
@@ -94,6 +96,30 @@ export const CATEGORIES: Category[] = [
 
 export const SERVICES: Service[] = [
   // ---------------- Finanças ----------------
+  {
+    slug: "financiamento",
+    name: "Simulador de financiamento",
+    short: "Calcule as parcelas nos sistemas Price e SAC.",
+    description:
+      "Simule as parcelas, os juros e o total de um financiamento nos sistemas Price (parcela fixa) e SAC (parcela decrescente).",
+    category: "financas",
+    icon: "Calculator",
+    status: "live",
+    featured: true,
+    keywords: ["financiamento", "simulador", "parcela", "sac", "price", "juros", "carro", "casa", "emprestimo"],
+  },
+  {
+    slug: "das-mei",
+    name: "DAS do MEI",
+    short: "Quanto o MEI paga por mês e como calcular atraso.",
+    description:
+      "Veja o valor mensal do DAS do MEI por atividade e calcule o valor com multa e juros em caso de atraso.",
+    category: "financas",
+    icon: "Store",
+    status: "live",
+    featured: true,
+    keywords: ["das", "mei", "microempreendedor", "quanto paga mei", "das mei atrasado", "guia mei"],
+  },
   {
     slug: "conversor-de-moedas",
     name: "Conversor de moedas",
@@ -220,6 +246,18 @@ export const SERVICES: Service[] = [
 
   // ---------------- Documentos ----------------
   {
+    slug: "gerador-de-curriculo",
+    name: "Gerador de currículo",
+    short: "Monte um currículo bonito e baixe em PDF.",
+    description:
+      "Preencha seus dados e gere um currículo profissional, organizado e pronto para baixar em PDF — de graça.",
+    category: "documentos",
+    icon: "GraduationCap",
+    status: "live",
+    featured: true,
+    keywords: ["curriculo", "cv", "curriculum", "gerar curriculo", "modelo de curriculo", "emprego"],
+  },
+  {
     slug: "gerador-de-contratos",
     name: "Gerador de contratos (IA)",
     short: "Responda um formulário, receba o contrato pronto.",
@@ -301,16 +339,27 @@ export const SERVICES: Service[] = [
     keywords: ["feriados", "feriado nacional", "calendario", "ponto facultativo"],
   },
   {
-    slug: "verificador-de-marca",
-    name: "Verificador de marca (INPI)",
-    short: "Veja se um nome de marca é viável.",
+    slug: "consulta-fipe",
+    name: "Tabela FIPE",
+    short: "Consulte o preço de referência de carros, motos e caminhões.",
     description:
-      "Busca inteligente para checar se o nome de uma marca já parece registrado no INPI.",
+      "Descubra o valor de mercado (Tabela FIPE) de um veículo por marca, modelo e ano.",
     category: "consultas",
-    icon: "BadgeCheck",
+    icon: "Car",
+    status: "live",
+    featured: true,
+    keywords: ["fipe", "tabela fipe", "preco de carro", "valor do veiculo", "moto", "caminhao"],
+  },
+  {
+    slug: "rastreador-de-encomendas",
+    name: "Rastrear encomenda",
+    short: "Acompanhe sua encomenda dos Correios pelo código.",
+    description:
+      "Digite o código de rastreamento e acompanhe a situação da sua encomenda dos Correios.",
+    category: "consultas",
+    icon: "PackageSearch",
     status: "soon",
-    ai: true,
-    keywords: ["marca", "inpi", "registro de marca", "nome disponivel", "registrar marca"],
+    keywords: ["rastrear", "rastreamento", "correios", "encomenda", "objeto", "sedex"],
   },
 
   // ---------------- Utilidades ----------------

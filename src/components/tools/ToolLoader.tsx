@@ -24,6 +24,10 @@ import Requerimentos from "./Requerimentos";
 import SimuladorParcelamento from "./SimuladorParcelamento";
 import SimuladorRendimento from "./SimuladorRendimento";
 import RescisaoTrabalhista from "./RescisaoTrabalhista";
+import Financiamento from "./Financiamento";
+import DasMei from "./DasMei";
+import GeradorCurriculo from "./GeradorCurriculo";
+import ConsultaFipe from "./ConsultaFipe";
 
 /** Mapa slug → componente da ferramenta. */
 const TOOLS: Record<string, ComponentType> = {
@@ -50,6 +54,10 @@ const TOOLS: Record<string, ComponentType> = {
   "simulador-de-parcelamento": SimuladorParcelamento,
   "rendimento-basico": SimuladorRendimento,
   "rescisao-trabalhista": RescisaoTrabalhista,
+  financiamento: Financiamento,
+  "das-mei": DasMei,
+  "gerador-de-curriculo": GeradorCurriculo,
+  "consulta-fipe": ConsultaFipe,
 };
 
 export function hasTool(slug: string): boolean {

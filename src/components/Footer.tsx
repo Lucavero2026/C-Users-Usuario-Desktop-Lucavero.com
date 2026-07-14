@@ -6,6 +6,7 @@ import { Logo } from "./Logo";
 
 const LEGAL = [
   { href: "/sobre", label: "Sobre" },
+  { href: "/programas-sociais", label: "Programas sociais" },
   { href: "/blog", label: "Blog" },
   { href: "/contato", label: "Contato" },
   { href: "/privacidade", label: "Política de Privacidade" },
