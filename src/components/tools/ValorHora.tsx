@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Field, Input, ResultBox, Row } from "@/components/ui";
+import { Button, Field, Input, ResultBox, Row, Select } from "@/components/ui";
 import { round2 } from "@/lib/br";
 import { formatBRL, parseNumber } from "@/lib/format";
 
-export default function ValorHora() {
+function Freelancer() {
   const [meta, setMeta] = useState("");
   const [custos, setCustos] = useState("");
   const [diasSemana, setDiasSemana] = useState("5");
@@ -133,6 +133,148 @@ export default function ValorHora() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function HoraExtra() {
+  const [salario, setSalario] = useState("");
+  const [jornada, setJornada] = useState("220");
+  const [qtd, setQtd] = useState("");
+  const [adicional, setAdicional] = useState("50");
+  const [res, setRes] = useState<{
+    horaNormal: number;
+    horaExtra: number;
+    total: number;
+    adic: number;
+  } | null>(null);
+
+  function calcular() {
+    const s = parseNumber(salario);
+    const j = parseNumber(jornada) || 220;
+    if (!isFinite(s) || s <= 0 || j <= 0) return;
+    const adic = parseNumber(adicional) || 0;
+    const horaNormal = round2(s / j);
+    const horaExtra = round2(horaNormal * (1 + adic / 100));
+    const q = parseNumber(qtd) || 0;
+    setRes({
+      horaNormal,
+      horaExtra,
+      total: round2(horaExtra * q),
+      adic,
+    });
+  }
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          calcular();
+        }}
+        className="space-y-4"
+      >
+        <Field label="Salário mensal (bruto)">
+          <Input
+            inputMode="decimal"
+            placeholder="Ex.: 2.200,00"
+            value={salario}
+            onChange={(e) => setSalario(e.target.value)}
+          />
+        </Field>
+        <Field
+          label="Jornada mensal (horas)"
+          hint="Padrão 220 h/mês para jornada de 44 h/semana."
+        >
+          <Input
+            inputMode="numeric"
+            value={jornada}
+            onChange={(e) => setJornada(e.target.value)}
+          />
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Adicional">
+            <Select
+              value={adicional}
+              onChange={(e) => setAdicional(e.target.value)}
+            >
+              <option value="50">50% (dia comum)</option>
+              <option value="100">100% (domingo/feriado)</option>
+              <option value="60">60%</option>
+              <option value="70">70%</option>
+            </Select>
+          </Field>
+          <Field label="Qtd. de horas extras" hint="No mês (opcional).">
+            <Input
+              inputMode="numeric"
+              placeholder="Ex.: 10"
+              value={qtd}
+              onChange={(e) => setQtd(e.target.value)}
+            />
+          </Field>
+        </div>
+        <Button type="submit">Calcular hora extra</Button>
+      </form>
+
+      <div>
+        {res ? (
+          <ResultBox tone="trabalhista">
+            <p className="mb-2 text-sm font-medium text-muted">
+              Valor da hora extra ({res.adic}%)
+            </p>
+            <p className="mb-4 text-3xl font-extrabold text-foreground">
+              {formatBRL(res.horaExtra)}
+            </p>
+            <Row label="Valor da hora normal" value={formatBRL(res.horaNormal)} />
+            <Row
+              label={`Hora extra (+${res.adic}%)`}
+              value={formatBRL(res.horaExtra)}
+            />
+            {res.total > 0 && (
+              <Row
+                label="Total das horas extras"
+                value={formatBRL(res.total)}
+                strong
+              />
+            )}
+            <p className="mt-3 text-xs text-muted">
+              Estimativa: hora normal = salário ÷ jornada mensal; a hora extra
+              acrescenta o adicional. Não inclui reflexos em DSR, férias e 13º.
+            </p>
+          </ResultBox>
+        ) : (
+          <div className="flex h-full min-h-40 items-center justify-center rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
+            Informe o salário e a jornada para calcular o valor da hora extra.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default function ValorHora() {
+  const [tab, setTab] = useState<"freelancer" | "extra">("freelancer");
+  return (
+    <div className="space-y-6">
+      <div className="inline-flex rounded-full border border-border bg-surface p-1">
+        {(
+          [
+            ["freelancer", "Quanto cobrar (freelancer)"],
+            ["extra", "Hora extra (CLT)"],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`focus-ring rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              tab === id ? "bg-brand text-white" : "text-muted hover:text-foreground"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {tab === "freelancer" ? <Freelancer /> : <HoraExtra />}
     </div>
   );
 }

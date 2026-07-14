@@ -123,6 +123,94 @@ export function round2(n: number): number {
 }
 
 // ----------------------------------------------------------------------------
+// Rescisão / acerto trabalhista (estimativa)
+// ----------------------------------------------------------------------------
+
+export type TipoRescisao =
+  | "sem-justa-causa"
+  | "pedido"
+  | "acordo"
+  | "justa-causa";
+
+export interface RescisaoResultado {
+  saldoSalario: number;
+  decimo: number;
+  feriasProp: number;
+  tercoFerias: number;
+  feriasVencidas: number;
+  aviso: number;
+  multaFgts: number;
+  total: number;
+  mesesTrabalhados: number;
+}
+
+/** Estimativa de verbas rescisórias. Não considera INSS/IRRF nem médias. */
+export function calcRescisao(p: {
+  salario: number;
+  admissao: string; // YYYY-MM-DD
+  demissao: string;
+  tipo: TipoRescisao;
+  avisoTrabalhado: boolean;
+  feriasVencidas: boolean;
+  saldoFgts: number;
+}): RescisaoResultado {
+  const d1 = new Date(p.admissao + "T00:00:00");
+  const d2 = new Date(p.demissao + "T00:00:00");
+  const salario = p.salario;
+
+  let meses =
+    (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
+  if (d2.getDate() < d1.getDate()) meses -= 1;
+  meses = Math.max(0, meses);
+  const anos = Math.floor(meses / 12);
+
+  const saldoSalario = round2((salario / 30) * d2.getDate());
+
+  const semDireitoProp = p.tipo === "justa-causa";
+  const mesesAno = d2.getMonth() + (d2.getDate() >= 15 ? 1 : 0);
+  const decimo = semDireitoProp ? 0 : round2((salario / 12) * mesesAno);
+
+  const mesesPeriodo = Math.min(12, (meses % 12) + (d2.getDate() >= 15 ? 1 : 0));
+  const feriasProp = semDireitoProp ? 0 : round2((salario / 12) * mesesPeriodo);
+  const tercoFerias = round2(feriasProp / 3);
+
+  const feriasVenc = p.feriasVencidas ? round2(salario + salario / 3) : 0;
+
+  const diasAviso = Math.min(90, 30 + 3 * anos);
+  let aviso = 0;
+  if (!p.avisoTrabalhado) {
+    if (p.tipo === "sem-justa-causa") aviso = round2((salario / 30) * diasAviso);
+    else if (p.tipo === "acordo")
+      aviso = round2(((salario / 30) * diasAviso) / 2);
+  }
+
+  const pct = p.tipo === "sem-justa-causa" ? 0.4 : p.tipo === "acordo" ? 0.2 : 0;
+  const multaFgts = round2((p.saldoFgts || 0) * pct);
+
+  const total = round2(
+    saldoSalario +
+      decimo +
+      feriasProp +
+      tercoFerias +
+      feriasVenc +
+      aviso +
+      multaFgts,
+  );
+
+  return {
+    saldoSalario,
+    decimo,
+    feriasProp,
+    tercoFerias,
+    feriasVencidas: feriasVenc,
+    aviso,
+    multaFgts,
+    total,
+    mesesTrabalhados: meses,
+  };
+}
+
+// ----------------------------------------------------------------------------
 // Documentos: CPF, CNPJ, PIS
 // ----------------------------------------------------------------------------
 

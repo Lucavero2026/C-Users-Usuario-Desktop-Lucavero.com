@@ -146,7 +146,7 @@ export const SERVICES: Service[] = [
       "Compare o desconto à vista com o custo de parcelar e veja qual opção realmente vale a pena.",
     category: "financas",
     icon: "CreditCard",
-    status: "soon",
+    status: "live",
     keywords: ["parcelar", "a vista", "desconto", "antecipar parcela", "financiamento", "sac", "price"],
   },
   {
@@ -157,7 +157,7 @@ export const SERVICES: Service[] = [
       "Estime o rendimento de uma aplicação simples (poupança/CDI) ao longo do tempo.",
     category: "financas",
     icon: "LineChart",
-    status: "soon",
+    status: "live",
     keywords: ["rendimento", "poupanca", "cdi", "investir", "juros compostos"],
   },
 
@@ -203,7 +203,7 @@ export const SERVICES: Service[] = [
       "Calcule uma estimativa da rescisão: saldo de salário, aviso, férias, 13º proporcional e multa do FGTS.",
     category: "trabalhista",
     icon: "FileMinus",
-    status: "soon",
+    status: "live",
     keywords: ["rescisao", "acerto trabalhista", "demissao", "fui demitido", "verbas rescisorias", "fgts"],
   },
   {

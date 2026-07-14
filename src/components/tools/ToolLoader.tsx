@@ -21,6 +21,9 @@ import DecodificadorJuridiques from "./DecodificadorJuridiques";
 import GeradorContratos from "./GeradorContratos";
 import ConsulteDireitos from "./ConsulteDireitos";
 import Requerimentos from "./Requerimentos";
+import SimuladorParcelamento from "./SimuladorParcelamento";
+import SimuladorRendimento from "./SimuladorRendimento";
+import RescisaoTrabalhista from "./RescisaoTrabalhista";
 
 /** Mapa slug → componente da ferramenta. */
 const TOOLS: Record<string, ComponentType> = {
@@ -44,6 +47,9 @@ const TOOLS: Record<string, ComponentType> = {
   "gerador-de-contratos": GeradorContratos,
   "consulte-seus-direitos": ConsulteDireitos,
   "requerimentos-e-recursos": Requerimentos,
+  "simulador-de-parcelamento": SimuladorParcelamento,
+  "rendimento-basico": SimuladorRendimento,
+  "rescisao-trabalhista": RescisaoTrabalhista,
 };
 
 export function hasTool(slug: string): boolean {
