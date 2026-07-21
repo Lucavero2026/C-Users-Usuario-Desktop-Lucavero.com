@@ -339,6 +339,18 @@ export const SERVICES: Service[] = [
     keywords: ["feriados", "feriado nacional", "calendario", "ponto facultativo"],
   },
   {
+    slug: "diagnostico-veiculo",
+    name: "Diagnóstico de veículo",
+    short: "Consulte a situação de um carro pela placa: roubo, sinistro, débitos e mais.",
+    description:
+      "Digite a placa e veja a situação do veículo: roubo/furto, sinistro, leilão, dados técnicos e valor de avaliação — com dados públicos, sem informações do proprietário.",
+    category: "consultas",
+    icon: "ShieldCheck",
+    status: "live",
+    featured: true,
+    keywords: ["consulta placa", "diagnostico veiculo", "carro roubado", "veiculo roubado", "sinistro", "debitos do carro", "situacao do veiculo", "consultar placa"],
+  },
+  {
     slug: "consulta-fipe",
     name: "Tabela FIPE",
     short: "Consulte o preço de referência de carros, motos e caminhões.",

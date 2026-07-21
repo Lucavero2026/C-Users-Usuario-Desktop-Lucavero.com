@@ -28,6 +28,7 @@ import Financiamento from "./Financiamento";
 import DasMei from "./DasMei";
 import GeradorCurriculo from "./GeradorCurriculo";
 import ConsultaFipe from "./ConsultaFipe";
+import DiagnosticoVeiculo from "./DiagnosticoVeiculo";
 
 /** Mapa slug → componente da ferramenta. */
 const TOOLS: Record<string, ComponentType> = {
@@ -58,6 +59,7 @@ const TOOLS: Record<string, ComponentType> = {
   "das-mei": DasMei,
   "gerador-de-curriculo": GeradorCurriculo,
   "consulta-fipe": ConsultaFipe,
+  "diagnostico-veiculo": DiagnosticoVeiculo,
 };
 
 export function hasTool(slug: string): boolean {
