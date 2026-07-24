@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, Lock, Rocket, ShieldCheck } from "lucide-react";
 import { Button, Field, Input, ResultBox, Row } from "@/components/ui";
 
@@ -44,6 +44,12 @@ export default function DiagnosticoVeiculo() {
   const [res, setRes] = useState<Resposta | null>(null);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
+
+  // Preenche a placa quando vem do quadro de destaque da home (?placa=...).
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search).get("placa");
+    if (p) setPlaca(formatarPlaca(p));
+  }, []);
 
   async function consultar() {
     setErro("");
@@ -182,24 +188,44 @@ function Relatorio({ res }: { res: Resposta }) {
         )}
       </ResultBox>
 
-      {/* Upsell: relatório completo (pago, em breve) */}
-      <div className="rounded-2xl border border-border bg-surface-muted p-5">
-        <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-          <Lock className="h-4 w-4 text-brand" /> Relatório completo — em breve
+      <UpsellCompleto />
+    </div>
+  );
+}
+
+function UpsellCompleto() {
+  const [aviso, setAviso] = useState(false);
+  return (
+    <div className="overflow-hidden rounded-2xl border border-brand/30 bg-gradient-to-br from-brand-soft to-surface p-5">
+      <p className="text-base font-bold text-foreground">
+        Ninguém é mais honesto com você do que você mesmo!
+      </p>
+      <p className="mt-1 text-sm text-muted">
+        Evite dores de cabeça: faça a{" "}
+        <strong className="text-foreground">consulta completa</strong> (inclusive
+        leilão) e compre com segurança.
+      </p>
+      <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-muted">
+        {COMPLETO.map((c) => (
+          <li key={c} className="flex items-start gap-1.5">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+            {c}
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        onClick={() => setAviso(true)}
+        className="focus-ring mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-bold text-white hover:bg-brand-600 sm:w-auto"
+      >
+        <Lock className="h-4 w-4" /> Fazer consulta completa — R$ 59,00
+      </button>
+      {aviso && (
+        <p className="mt-3 rounded-xl bg-surface-muted p-3 text-sm text-muted">
+          🚧 O pagamento por Pix está sendo ativado — em breve você poderá liberar
+          o relatório completo aqui mesmo.
         </p>
-        <ul className="space-y-1.5 text-sm text-muted">
-          {COMPLETO.map((c) => (
-            <li key={c} className="flex items-start gap-2">
-              <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted/60" />
-              {c}
-            </li>
-          ))}
-        </ul>
-        <p className="mt-3 text-xs text-muted">
-          Em breve você poderá liberar o relatório completo com a situação do
-          veículo e débitos.
-        </p>
-      </div>
+      )}
     </div>
   );
 }

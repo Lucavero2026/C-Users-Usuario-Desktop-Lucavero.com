@@ -10,8 +10,12 @@ import {
   servicesByCategory,
 } from "@/lib/services";
 import { SORTED_POSTS } from "@/lib/blog";
+import { VeiculoSpotlight } from "@/components/VeiculoSpotlight";
 
-const FEATURED = SERVICES.filter((s) => s.featured && s.status === "live");
+// Destaques (sem o diagnóstico de veículo, que tem seu próprio quadro no topo).
+const FEATURED = SERVICES.filter(
+  (s) => s.featured && s.status === "live" && s.slug !== "diagnostico-veiculo",
+);
 
 const CHIPS = [
   { label: "Salário líquido", slug: "salario-liquido" },
@@ -62,6 +66,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* CARRO-CHEFE — diagnóstico de veículo em primeiro lugar */}
+      <VeiculoSpotlight />
 
       {/* DESTAQUES — serviços de maior tráfego, com visual próprio */}
       <section className="container-page pt-4 pb-2">
