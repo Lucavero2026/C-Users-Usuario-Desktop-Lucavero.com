@@ -201,9 +201,9 @@ function UpsellCompleto() {
         Ninguém é mais honesto com você do que você mesmo!
       </p>
       <p className="mt-1 text-sm text-muted">
-        Evite dores de cabeça: faça a{" "}
+        Evite dores de cabeça, faça a{" "}
         <strong className="text-foreground">consulta completa</strong> (inclusive
-        leilão) e compre com segurança.
+        leilão), por apenas R$ 59,00.
       </p>
       <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-muted">
         {COMPLETO.map((c) => (
