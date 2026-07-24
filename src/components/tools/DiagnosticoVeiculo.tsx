@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Rocket,
-  ShieldCheck,
-} from "lucide-react";
+import { CheckCircle2, Lock, Rocket, ShieldCheck } from "lucide-react";
 import { Button, Field, Input, ResultBox, Row } from "@/components/ui";
 
 interface Dados {
@@ -35,11 +30,9 @@ interface Resposta {
 }
 
 const CHECAGENS = [
-  "Situação de roubo / furto",
-  "Registro de sinistro (perda total)",
-  "Passagem por leilão",
-  "Dados técnicos: tipo, cor, modelo, ano",
-  "Valor de avaliação (Tabela FIPE)",
+  "Marca, modelo e ano",
+  "Cor e tipo do veículo",
+  "Combustível, cidade e estado",
 ];
 
 function formatarPlaca(v: string): string {
@@ -106,7 +99,7 @@ export default function DiagnosticoVeiculo() {
 
         <div className="rounded-2xl border border-border bg-surface-muted p-5">
           <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
-            <ShieldCheck className="h-4 w-4 text-brand" /> O que o diagnóstico mostra
+            <ShieldCheck className="h-4 w-4 text-brand" /> Consulta grátis mostra
           </p>
           <ul className="space-y-1.5 text-sm text-muted">
             {CHECAGENS.map((c) => (
@@ -158,50 +151,55 @@ export default function DiagnosticoVeiculo() {
   );
 }
 
-function Badge({ label, alerta }: { label: string; alerta?: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium ${
-        alerta
-          ? "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
-          : "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-      }`}
-    >
-      {alerta ? (
-        <AlertTriangle className="h-4 w-4" />
-      ) : (
-        <CheckCircle2 className="h-4 w-4" />
-      )}
-      {label}
-    </span>
-  );
-}
+const COMPLETO = [
+  "Situação de roubo / furto",
+  "Débitos, IPVA e multas",
+  "Sinistro (perda total) e leilão",
+  "Valor de avaliação (FIPE)",
+];
 
 function Relatorio({ res }: { res: Resposta }) {
   const d = res.dados || {};
-  const s = res.situacao || {};
   return (
     <div className="space-y-4">
       <ResultBox tone="consultas">
-        <p className="mb-3 text-sm font-medium text-muted">Situação — placa {res.placa}</p>
-        <div className="flex flex-wrap gap-2">
-          <Badge label={s.rouboFurto ? "Consta roubo/furto" : "Sem roubo/furto"} alerta={s.rouboFurto} />
-          <Badge label={s.sinistro ? "Consta sinistro" : "Sem sinistro"} alerta={s.sinistro} />
-          <Badge label={s.leilao ? "Passou por leilão" : "Sem leilão"} alerta={s.leilao} />
-        </div>
-      </ResultBox>
-
-      <ResultBox tone="consultas">
-        <p className="mb-2 text-sm font-medium text-muted">Dados do veículo</p>
-        {d.marca && <Row label="Veículo" value={`${d.marca} ${d.modelo || ""}`.trim()} />}
+        <p className="mb-2 text-sm font-medium text-muted">
+          Dados do veículo — placa {res.placa}
+        </p>
+        {(d.marca || d.modelo) && (
+          <Row label="Veículo" value={`${d.marca || ""} ${d.modelo || ""}`.trim()} />
+        )}
         {d.ano && <Row label="Ano" value={d.ano} />}
         {d.cor && <Row label="Cor" value={d.cor} />}
+        {d.tipo && <Row label="Tipo" value={d.tipo} />}
         {d.combustivel && <Row label="Combustível" value={d.combustivel} />}
         {(d.municipio || d.uf) && (
-          <Row label="Local" value={`${d.municipio || ""} ${d.uf ? "/ " + d.uf : ""}`.trim()} />
+          <Row
+            label="Local"
+            value={`${d.municipio || ""} ${d.uf ? "/ " + d.uf : ""}`.trim()}
+            strong
+          />
         )}
-        {res.fipe?.valor && <Row label="Valor FIPE" value={res.fipe.valor} strong />}
       </ResultBox>
+
+      {/* Upsell: relatório completo (pago, em breve) */}
+      <div className="rounded-2xl border border-border bg-surface-muted p-5">
+        <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Lock className="h-4 w-4 text-brand" /> Relatório completo — em breve
+        </p>
+        <ul className="space-y-1.5 text-sm text-muted">
+          {COMPLETO.map((c) => (
+            <li key={c} className="flex items-start gap-2">
+              <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted/60" />
+              {c}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-xs text-muted">
+          Em breve você poderá liberar o relatório completo com a situação do
+          veículo e débitos.
+        </p>
+      </div>
     </div>
   );
 }

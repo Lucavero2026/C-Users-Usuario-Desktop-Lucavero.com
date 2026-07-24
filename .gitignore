@@ -43,3 +43,7 @@ next-env.d.ts
 # Segredos / arquivos sensiveis (nao versionar)
 Chave Api Anthropic*.txt
 *.key
+
+# Chave do provedor de veiculos (nao versionar)
+consultarplaca.api.txt
+*.api.txt

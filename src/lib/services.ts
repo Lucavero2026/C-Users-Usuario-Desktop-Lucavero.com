@@ -341,9 +341,9 @@ export const SERVICES: Service[] = [
   {
     slug: "diagnostico-veiculo",
     name: "Diagnóstico de veículo",
-    short: "Consulte a situação de um carro pela placa: roubo, sinistro, débitos e mais.",
+    short: "Consulte os dados de um carro pela placa — grátis. Relatório completo em breve.",
     description:
-      "Digite a placa e veja a situação do veículo: roubo/furto, sinistro, leilão, dados técnicos e valor de avaliação — com dados públicos, sem informações do proprietário.",
+      "Digite a placa e veja os dados do veículo (marca, modelo, ano, cor, tipo, cidade) de graça. Em breve, o relatório completo com roubo/furto, débitos e situação. Dados públicos, sem informações do proprietário.",
     category: "consultas",
     icon: "ShieldCheck",
     status: "live",

@@ -5,26 +5,23 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 /**
- * Consulta de veículo por placa (dados públicos, SEM dados do proprietário).
+ * Consulta de veículo por placa via Consultar Placa (dados públicos, SEM dados
+ * do proprietário). Camada GRÁTIS: dados do veículo (endpoint /v2/consultarPlaca,
+ * 1 consulta barata). Roubo/furto, sinistro, leilão e FIPE são endpoints
+ * separados e pagos → entram no "relatório completo" (fase de pagamento).
  *
- * A fonte é um provedor licenciado de dados veiculares (ex.: Consultar Placa),
- * configurado por `VEICULO_API_KEY` (+ opcional `VEICULO_API_URL`). Enquanto a
- * chave não estiver configurada, a rota responde `not_configured` e a tela
- * mostra o pré-lançamento. Ao ativar, mapeamos a resposta do provedor para o
- * formato normalizado abaixo (dados básicos — camada grátis).
+ * Auth: Basic base64(VEICULO_API_EMAIL:VEICULO_API_KEY).
  */
 
 function normalizarPlaca(p: string): string {
   return (p || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
 }
-
 function placaValida(p: string): boolean {
-  // Antiga: ABC1234 | Mercosul: ABC1D23
   return /^[A-Z]{3}[0-9]{4}$/.test(p) || /^[A-Z]{3}[0-9][A-Z][0-9]{2}$/.test(p);
 }
 
 export async function POST(req: Request) {
-  const { ok } = rateLimit(`veiculo:${clientKey(req)}`, { limit: 10 });
+  const { ok } = rateLimit(`veiculo:${clientKey(req)}`, { limit: 6 });
   if (!ok) {
     return NextResponse.json(
       { status: "error", error: "Muitas consultas. Aguarde um minuto." },
@@ -39,7 +36,6 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ status: "error", error: "Requisição inválida." }, { status: 400 });
   }
-
   if (!placaValida(placa)) {
     return NextResponse.json(
       { status: "error", error: "Placa inválida. Use o formato ABC1234 ou ABC1D23." },
@@ -47,23 +43,26 @@ export async function POST(req: Request) {
     );
   }
 
-  const apiKey = process.env.VEICULO_API_KEY;
-  if (!apiKey) {
-    // Serviço ainda não ativado (sem provedor configurado).
+  const email = process.env.VEICULO_API_EMAIL;
+  const key = process.env.VEICULO_API_KEY;
+  if (!email || !key) {
     return NextResponse.json({ status: "not_configured", placa });
   }
 
-  // ---- Ativação (quando a chave existir) ----
-  // Aqui chamamos o provedor e devolvemos o formato normalizado:
-  // { status:"ok", placa, dados:{tipo,marca,modelo,ano,cor,combustivel,municipio,uf},
-  //   situacao:{rouboFurto,sinistro,leilao}, fipe:{valor,codigo} }
-  // A implementação exata é finalizada com a resposta real do provedor.
+  const base = process.env.VEICULO_API_URL || "https://api.consultarplaca.com.br";
+  const auth = Buffer.from(`${email}:${key}`).toString("base64");
+
   try {
-    const base = process.env.VEICULO_API_URL || "https://api.consultarplaca.com.br";
-    const r = await fetch(`${base}/veiculo/${placa}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-      next: { revalidate: 60 * 60 }, // cache 1h por placa
+    const r = await fetch(`${base}/v2/consultarPlaca?placa=${placa}`, {
+      headers: { Authorization: `Basic ${auth}` },
+      next: { revalidate: 60 * 60 * 24 }, // cache 24h por placa (economiza créditos)
     });
+    if (r.status === 401) {
+      return NextResponse.json(
+        { status: "error", error: "Falha de autenticação com o provedor." },
+        { status: 502 },
+      );
+    }
     if (!r.ok) {
       return NextResponse.json(
         { status: "error", error: "Não foi possível consultar agora." },
@@ -71,7 +70,29 @@ export async function POST(req: Request) {
       );
     }
     const data = await r.json();
-    return NextResponse.json({ status: "ok", placa, provider: data });
+    const v = data?.dados?.informacoes_veiculo?.dados_veiculo;
+    const t = data?.dados?.informacoes_veiculo?.dados_tecnicos;
+    if (data?.status !== "ok" || !v) {
+      return NextResponse.json(
+        { status: "error", error: "Veículo não encontrado para esta placa." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({
+      status: "ok",
+      placa,
+      dados: {
+        tipo: t?.tipo_veiculo || null,
+        marca: v.marca || null,
+        modelo: v.modelo || null,
+        ano: v.ano_modelo && v.ano_modelo !== "0" ? v.ano_modelo : v.ano_fabricacao || null,
+        cor: v.cor || null,
+        combustivel: v.combustivel || null,
+        municipio: v.municipio || null,
+        uf: v.uf_municipio || null,
+      },
+    });
   } catch {
     return NextResponse.json(
       { status: "error", error: "Falha ao consultar o veículo." },
