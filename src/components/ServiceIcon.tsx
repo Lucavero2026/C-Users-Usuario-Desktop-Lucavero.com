@@ -39,6 +39,12 @@ import {
   TrendingUp,
   Wallet,
   Wrench,
+  Coins,
+  LifeBuoy,
+  Palmtree,
+  PieChart,
+  SearchCheck,
+  Sprout,
   type LucideIcon,
 } from "lucide-react";
 
@@ -83,6 +89,12 @@ const ICONS: Record<string, LucideIcon> = {
   TrendingUp,
   Wallet,
   Wrench,
+  Coins,
+  LifeBuoy,
+  Palmtree,
+  PieChart,
+  SearchCheck,
+  Sprout,
 };
 
 export function ServiceIcon({

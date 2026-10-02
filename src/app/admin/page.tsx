@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { CATEGORIES, SERVICES } from "@/lib/services";
-import { POSTS } from "@/lib/blog";
+import { getAllPosts } from "@/lib/blog";
+import { postState } from "@/lib/blog-shared";
+import { storeMode } from "@/lib/blog-store";
 import { ADMIN_COOKIE, adminEnabled, isValidToken } from "@/lib/admin";
 import { AdminLogin } from "@/components/AdminLogin";
 import { AdminLogout } from "@/components/AdminLogout";
@@ -69,6 +71,8 @@ export default async function AdminPage() {
   const ai = SERVICES.filter((s) => s.ai);
   const aiOn = !!process.env.ANTHROPIC_API_KEY;
   const adsOn = !!process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const POSTS = await getAllPosts();
+  const blogMode = storeMode();
 
   return (
     <div className="container-page py-10">
@@ -77,7 +81,15 @@ export default async function AdminPage() {
           <h1 className="text-3xl font-bold tracking-tight">Administração</h1>
           <p className="text-sm text-muted">Visão geral do Lucavero Multiserviços.</p>
         </div>
-        <AdminLogout />
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/blog/novo"
+            className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
+          >
+            + Novo artigo
+          </Link>
+          <AdminLogout />
+        </div>
       </header>
 
       {/* Métricas */}
@@ -105,6 +117,13 @@ export default async function AdminPage() {
               <p className="text-xs text-muted">Anúncios automáticos</p>
             </div>
             <Badge ok={adsOn} on="Configurado" off="Pendente" />
+          </div>
+          <div className="flex items-center justify-between p-4">
+            <div>
+              <p className="font-medium">Publicação do blog (GitHub)</p>
+              <p className="text-xs text-muted">Salvar artigos pelo painel em produção</p>
+            </div>
+            <Badge ok={blogMode !== "readonly"} on={blogMode === "github" ? "Ativa" : "Modo local"} off="Configurar" />
           </div>
         </div>
       </section>
@@ -143,23 +162,23 @@ export default async function AdminPage() {
 
       {/* Blog */}
       <section className="mt-8">
-        <h2 className="mb-3 text-lg font-bold">Artigos ({POSTS.length})</h2>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-bold">Últimos artigos</h2>
+          <Link href="/admin/blog" className="text-sm font-semibold text-brand hover:underline">
+            Gerenciar blog →
+          </Link>
+        </div>
         <ul className="card divide-y divide-border text-sm">
-          {POSTS.map((p) => (
+          {POSTS.slice(0, 8).map((p) => (
             <li key={p.slug} className="flex items-center justify-between p-3">
-              <Link href={`/blog/${p.slug}`} className="hover:text-brand">
+              <Link href={`/admin/blog/${p.slug}`} className="hover:text-brand">
                 {p.emoji} {p.title}
               </Link>
-              <span className="text-xs text-muted">{p.tag}</span>
+              <span className="text-xs capitalize text-muted">{postState(p)}</span>
             </li>
           ))}
         </ul>
       </section>
-
-      <p className="mt-8 text-xs text-muted">
-        Dica: para adicionar ferramentas ou artigos, edite <code>src/lib/services.ts</code>{" "}
-        e <code>src/lib/blog.ts</code>. O painel é somente leitura.
-      </p>
     </div>
   );
 }

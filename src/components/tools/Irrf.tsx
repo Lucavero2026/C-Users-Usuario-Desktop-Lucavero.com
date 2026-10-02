@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Button, Field, Input, ResultBox, Row } from "@/components/ui";
 import {
-  calcIRRF,
+  calcINSS,
+  calcIRRFCompleto,
   IRRF_DEDUCAO_DEPENDENTE,
   TABELA_ANO,
-  round2,
+  type IRRFResultado,
 } from "@/lib/br";
 import { formatBRL, formatPercent, parseNumber } from "@/lib/format";
 
@@ -14,21 +15,20 @@ export default function Irrf() {
   const [base, setBase] = useState("");
   const [inss, setInss] = useState("");
   const [dep, setDep] = useState("0");
-  const [res, setRes] = useState<{
-    baseCalc: number;
-    valor: number;
-    aliquota: number;
-  } | null>(null);
+  const [res, setRes] = useState<(IRRFResultado & { inss: number }) | null>(null);
 
   function calcular() {
     const b = parseNumber(base);
     if (!isFinite(b) || b <= 0) return;
-    const desconto =
-      (parseNumber(inss) || 0) +
-      (parseInt(dep || "0", 10) || 0) * IRRF_DEDUCAO_DEPENDENTE;
-    const baseCalc = round2(Math.max(0, b - desconto));
-    const r = calcIRRF(baseCalc);
-    setRes({ baseCalc, valor: r.valor, aliquota: r.aliquota });
+    // Sem INSS informado, estima pelo INSS de empregado CLT.
+    const inssInformado = parseNumber(inss);
+    const inssValor = isFinite(inssInformado) ? inssInformado : calcINSS(b).valor;
+    const r = calcIRRFCompleto({
+      rendimento: b,
+      inss: inssValor,
+      dependentes: parseInt(dep || "0", 10) || 0,
+    });
+    setRes({ ...r, inss: inssValor });
   }
 
   return (
@@ -43,15 +43,18 @@ export default function Irrf() {
         <Field label="Rendimento tributável" hint="Salário ou pagamento bruto do mês.">
           <Input
             inputMode="decimal"
-            placeholder="Ex.: 5.000,00"
+            placeholder="Ex.: 6.000,00"
             value={base}
             onChange={(e) => setBase(e.target.value)}
           />
         </Field>
-        <Field label="INSS descontado (opcional)" hint="Dedutível da base do IR.">
+        <Field
+          label="INSS descontado (opcional)"
+          hint="Se deixar em branco, calculamos o INSS de CLT automaticamente."
+        >
           <Input
             inputMode="decimal"
-            placeholder="Ex.: 550,00"
+            placeholder="Ex.: 641,51"
             value={inss}
             onChange={(e) => setInss(e.target.value)}
           />
@@ -73,12 +76,26 @@ export default function Irrf() {
             <p className="mb-4 text-3xl font-extrabold text-foreground">
               {formatBRL(res.valor)}
             </p>
-            <Row label="Base de cálculo" value={formatBRL(res.baseCalc)} />
-            <Row label="Alíquota" value={formatPercent(res.aliquota, 1)} />
+            <Row
+              label={res.simplificado ? "Base (desconto simplificado)" : "Base (INSS + dependentes)"}
+              value={formatBRL(res.base)}
+            />
+            <Row label="INSS considerado" value={formatBRL(res.inss)} />
+            <Row label="Alíquota da faixa" value={formatPercent(res.aliquota, 1)} />
+            <Row label="Imposto pela tabela" value={formatBRL(res.impostoTabela)} />
+            <Row label="Redução Lei 15.270/2025" value={`− ${formatBRL(res.reducao)}`} />
             <Row label="Imposto retido" value={formatBRL(res.valor)} strong />
+            {res.valor === 0 && res.impostoTabela > 0 && (
+              <p className="mt-3 rounded-lg bg-emerald-50 p-2.5 text-xs font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                Isento em {TABELA_ANO}: quem recebe até R$ 5.000 por mês não paga IR
+                retido na fonte.
+              </p>
+            )}
             <p className="mt-3 text-xs text-muted">
-              Tabela progressiva de {TABELA_ANO}. Dedução por dependente:{" "}
-              {formatBRL(IRRF_DEDUCAO_DEPENDENTE)}. Estimativa.
+              Tabela progressiva de {TABELA_ANO} com a redução da Lei 15.270/2025
+              (isenção até R$ 5.000 e redução parcial até R$ 7.350). Dedução por
+              dependente: {formatBRL(IRRF_DEDUCAO_DEPENDENTE)}. Usa automaticamente o
+              desconto mais vantajoso. Estimativa.
             </p>
           </ResultBox>
         ) : (

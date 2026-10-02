@@ -17,6 +17,12 @@ export function Header() {
               {c.name}
             </Link>
           ))}
+          <Link
+            href="/blog"
+            className="focus-ring rounded-full px-3 py-1.5 text-sm font-medium text-muted transition-colors hover:bg-surface-muted hover:text-foreground"
+          >
+            Blog
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link

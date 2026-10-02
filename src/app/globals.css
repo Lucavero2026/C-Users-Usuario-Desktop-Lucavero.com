@@ -142,3 +142,108 @@ body {
       radial-gradient(50rem 28rem at 90% 0%, rgba(2, 132, 199, 0.16), transparent 55%);
   }
 }
+
+/* ---------- Artigos do blog ---------- */
+.prose-lv h2,
+.prose-lv h3 {
+  scroll-margin-top: 5rem;
+  color: var(--foreground);
+}
+.prose-lv > p,
+.prose-lv > ul,
+.prose-lv > ol,
+.prose-lv > blockquote,
+.prose-lv > table,
+.prose-lv > figure,
+.prose-lv > img {
+  margin-block: 1rem;
+}
+.prose-lv ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+}
+.prose-lv blockquote {
+  border-left: 4px solid var(--brand);
+  background: var(--brand-soft);
+  border-radius: 0 0.75rem 0.75rem 0;
+  padding: 0.75rem 1rem;
+}
+.prose-lv blockquote p {
+  margin: 0;
+  color: var(--foreground);
+}
+.prose-lv img {
+  border-radius: 0.9rem;
+  width: 100%;
+  height: auto;
+}
+.prose-lv figcaption {
+  margin-top: 0.4rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.prose-lv table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose-lv th,
+.prose-lv td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.prose-lv th {
+  background: var(--surface-muted);
+  font-weight: 600;
+}
+.prose-lv hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-block: 2rem;
+}
+.prose-lv code {
+  background: var(--surface-muted);
+  border-radius: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9em;
+}
+.lv-tool-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-block: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--brand);
+  border-radius: 1rem;
+  background: var(--surface);
+  text-decoration: none !important;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.lv-tool-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.25);
+}
+.lv-tool-card strong {
+  font-size: 1.05rem;
+}
+.lv-tool-card span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.lv-tool-card .lv-tool-card__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.lv-tool-card .lv-tool-card__cta {
+  margin-top: 0.3rem;
+  font-weight: 600;
+  color: var(--brand);
+}

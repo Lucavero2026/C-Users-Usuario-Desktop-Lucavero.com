@@ -23,3 +23,10 @@ export function checkPassword(password: string): boolean {
 export function isValidToken(token: string | undefined): boolean {
   return adminEnabled() && !!token && token === expectedToken();
 }
+
+/** Verifica o cookie de administrador na requisição atual (rotas e páginas). */
+export async function isAdmin(): Promise<boolean> {
+  const { cookies } = await import("next/headers");
+  const jar = await cookies();
+  return isValidToken(jar.get(ADMIN_COOKIE)?.value);
+}

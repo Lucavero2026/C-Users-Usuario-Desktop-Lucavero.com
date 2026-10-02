@@ -1,15 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Field, Input, ResultBox, Row, Select } from "@/components/ui";
 import { round2 } from "@/lib/br";
-import { formatBRL, parseNumber } from "@/lib/format";
+import { formatBRL, formatNumber, parseNumber } from "@/lib/format";
+import { carregarTaxas } from "@/lib/bcb";
+
+/** % ao ano → % ao mês equivalente, no formato do campo (vírgula). */
+function mensal(anual: number): string {
+  return formatNumber((Math.pow(1 + anual / 100, 1 / 12) - 1) * 100, 2);
+}
 
 export default function SimuladorRendimento() {
   const [inicial, setInicial] = useState("");
   const [aporte, setAporte] = useState("");
   const [taxa, setTaxa] = useState("0,9");
   const [meses, setMeses] = useState("12");
+  const [refs, setRefs] = useState({ poupanca: "0,50", cdi: "0,90", selic: "0,90" });
+
+  // Preenche as referências com as taxas atuais do Banco Central.
+  useEffect(() => {
+    carregarTaxas()
+      .then((t) => {
+        const r = {
+          poupanca: formatNumber(t.poupanca, 2),
+          cdi: mensal(t.cdi),
+          selic: mensal(t.selic - 0.2),
+        };
+        setRefs(r);
+        setTaxa(r.cdi);
+      })
+      .catch(() => {});
+  }, []);
   const [res, setRes] = useState<{
     total: number;
     investido: number;
@@ -70,9 +92,12 @@ export default function SimuladorRendimento() {
               value={taxa}
               onChange={(e) => setTaxa(e.target.value)}
             >
-              <option value="0,5">Poupança (~0,5%)</option>
-              <option value="0,9">CDI (~0,9%)</option>
-              <option value="1,0">1,0% a.m.</option>
+              <option value={refs.poupanca}>Poupança ({refs.poupanca}%)</option>
+              <option value={refs.cdi}>100% do CDI ({refs.cdi}%)</option>
+              <option value={refs.selic}>Tesouro Selic ({refs.selic}%)</option>
+              {![refs.poupanca, refs.cdi, refs.selic].includes(taxa) && (
+                <option value={taxa}>Personalizada ({taxa}%)</option>
+              )}
             </Select>
           </Field>
         </div>
@@ -99,8 +124,9 @@ export default function SimuladorRendimento() {
             <Row label="Rendimento (juros)" value={`+ ${formatBRL(res.rendimento)}`} />
             <Row label="Valor final" value={formatBRL(res.total)} strong />
             <p className="mt-3 text-xs text-muted">
-              Juros compostos com aporte mensal. As taxas são aproximadas e variam
-              com a Selic. Estimativa, sem descontar imposto de renda.
+              Juros compostos com aporte mensal. Referências com as taxas atuais do
+              Banco Central. Estimativa, sem descontar imposto de renda — para comparar
+              já com IR, use o comparador de investimentos.
             </p>
           </ResultBox>
         ) : (

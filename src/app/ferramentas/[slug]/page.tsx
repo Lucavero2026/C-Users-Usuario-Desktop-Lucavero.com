@@ -7,6 +7,13 @@ import { ToolShell } from "@/components/ToolShell";
 import { ToolLoader } from "@/components/tools/ToolLoader";
 import { ServiceCard } from "@/components/ServiceCard";
 import { JsonLd, serviceJsonLd } from "@/components/JsonLd";
+import { PostCard } from "@/components/blog/BlogListing";
+import { getPostsForTool } from "@/lib/blog";
+import { renderPost } from "@/lib/blog-render";
+import { TOOL_CONTENT } from "@/lib/tool-content";
+
+// Revalida de hora em hora para listar artigos novos do blog sobre a ferramenta.
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return SERVICES.map((s) => ({ slug: s.slug }));
@@ -25,6 +32,8 @@ export async function generateMetadata({
     description: service.description,
     keywords: [service.name, ...service.keywords],
     alternates: { canonical: `/ferramentas/${service.slug}` },
+    // Ferramentas "em breve" não têm conteúdo útil ainda: fora do índice do Google.
+    ...(service.status !== "live" ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: `${service.name} · Lucavero Multiserviços`,
       description: service.description,
@@ -42,12 +51,27 @@ export default async function FerramentaPage({
   if (!service) notFound();
 
   const relacionadas = servicesByCategory(service.category)
-    .filter((s) => s.slug !== service.slug)
+    .filter((s) => s.slug !== service.slug && s.status === "live")
     .slice(0, 3);
+  const artigos = service.status === "live" ? await getPostsForTool(service.slug) : [];
+  const conteudo = service.status === "live" ? TOOL_CONTENT[service.slug] : undefined;
 
   return (
     <>
       <JsonLd data={serviceJsonLd(service)} />
+      {conteudo && conteudo.faq.length > 0 && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: conteudo.faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          }}
+        />
+      )}
       <ToolShell service={service}>
         {service.status === "live" ? (
           <ToolLoader slug={service.slug} />
@@ -55,6 +79,44 @@ export default async function FerramentaPage({
           <ComingSoon aiTool={!!service.ai} />
         )}
       </ToolShell>
+
+      {conteudo && (
+        <section className="container-page pb-6">
+          <div className="mx-auto max-w-3xl">
+            <div
+              className="prose-lv"
+              dangerouslySetInnerHTML={{ __html: renderPost(conteudo.body).html }}
+            />
+            {conteudo.faq.length > 0 && (
+              <div className="mt-8">
+                <h2 className="mb-3 text-xl font-bold">Perguntas frequentes</h2>
+                <div className="space-y-2">
+                  {conteudo.faq.map((f) => (
+                    <details key={f.q} className="group rounded-xl border border-border bg-surface p-4">
+                      <summary className="cursor-pointer list-none font-semibold">
+                        <span className="mr-2 inline-block text-brand transition-transform group-open:rotate-90">›</span>
+                        {f.q}
+                      </summary>
+                      <p className="mt-2 leading-relaxed text-muted">{f.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {artigos.length > 0 && (
+        <section className="container-page pb-6">
+          <h2 className="mb-4 text-xl font-bold">Artigos sobre o assunto</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {artigos.map((p) => (
+              <PostCard key={p.slug} post={p} headingLevel="h3" />
+            ))}
+          </div>
+        </section>
+      )}
 
       {relacionadas.length > 0 && (
         <section className="container-page pb-4">

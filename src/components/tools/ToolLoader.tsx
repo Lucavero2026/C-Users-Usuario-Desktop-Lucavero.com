@@ -28,7 +28,15 @@ import Financiamento from "./Financiamento";
 import DasMei from "./DasMei";
 import GeradorCurriculo from "./GeradorCurriculo";
 import ConsultaFipe from "./ConsultaFipe";
-import DiagnosticoVeiculo from "./DiagnosticoVeiculo";
+import ReajusteAluguel from "./ReajusteAluguel";
+import CorrecaoInflacao from "./CorrecaoInflacao";
+import JurosCompostos from "./JurosCompostos";
+import ComparadorInvestimentos from "./ComparadorInvestimentos";
+import ReservaEmergencia from "./ReservaEmergencia";
+import Orcamento503020 from "./Orcamento503020";
+import JurosParcelamento from "./JurosParcelamento";
+import Porcentagem from "./Porcentagem";
+import ViverDeRenda from "./ViverDeRenda";
 
 /** Mapa slug → componente da ferramenta. */
 const TOOLS: Record<string, ComponentType> = {
@@ -59,7 +67,15 @@ const TOOLS: Record<string, ComponentType> = {
   "das-mei": DasMei,
   "gerador-de-curriculo": GeradorCurriculo,
   "consulta-fipe": ConsultaFipe,
-  "diagnostico-veiculo": DiagnosticoVeiculo,
+  "reajuste-de-aluguel": ReajusteAluguel,
+  "correcao-pela-inflacao": CorrecaoInflacao,
+  "juros-compostos": JurosCompostos,
+  "comparador-de-investimentos": ComparadorInvestimentos,
+  "reserva-de-emergencia": ReservaEmergencia,
+  "orcamento-50-30-20": Orcamento503020,
+  "juros-do-parcelamento": JurosParcelamento,
+  "calculadora-de-porcentagem": Porcentagem,
+  "viver-de-renda": ViverDeRenda,
 };
 
 export function hasTool(slug: string): boolean {

@@ -147,22 +147,22 @@ export const SERVICES: Service[] = [
     name: "Reajuste de aluguel (IPCA/IGP-M)",
     short: "Reajuste o aluguel pelo índice do contrato.",
     description:
-      "Calcule o novo valor do aluguel corrigido por IPCA, IGP-M ou INPC no período do contrato.",
+      "Calcule o novo valor do aluguel pelo IGP-M, IPCA ou INPC acumulado em 12 meses, com os índices oficiais atualizados.",
     category: "financas",
     icon: "Home",
-    status: "soon",
-    keywords: ["aluguel", "reajuste", "ipca", "igpm", "inpc", "correcao aluguel"],
+    status: "live",
+    keywords: ["aluguel", "reajuste de aluguel", "ipca", "igpm", "igp-m acumulado", "inpc", "correcao aluguel", "calculadora aluguel"],
   },
   {
     slug: "correcao-pela-inflacao",
     name: "Correção pela inflação",
     short: "Atualize um valor antigo pela inflação.",
     description:
-      "Veja quanto vale hoje um valor do passado, corrigido pelos principais índices de inflação.",
+      "Veja quanto vale hoje um valor do passado, corrigido pelo IPCA, INPC ou IGP-M com dados oficiais do Banco Central.",
     category: "financas",
     icon: "TrendingUp",
-    status: "soon",
-    keywords: ["inflacao", "corrigir valor", "poder de compra", "atualizar valor"],
+    status: "live",
+    keywords: ["inflacao", "corrigir valor", "correcao monetaria", "ipca acumulado", "poder de compra", "atualizar valor"],
   },
   {
     slug: "simulador-de-parcelamento",
@@ -185,6 +185,85 @@ export const SERVICES: Service[] = [
     icon: "LineChart",
     status: "live",
     keywords: ["rendimento", "poupanca", "cdi", "investir", "juros compostos"],
+  },
+
+  {
+    slug: "juros-compostos",
+    name: "Calculadora de juros compostos",
+    short: "Veja seu dinheiro crescer com aportes mensais.",
+    description:
+      "Simule juros compostos com valor inicial, aportes mensais e taxa ao mês ou ao ano, com gráfico e tabela da evolução ano a ano.",
+    category: "financas",
+    icon: "Sprout",
+    status: "live",
+    keywords: ["juros compostos", "calculadora juros compostos", "aporte mensal", "investir todo mes", "montante", "bola de neve"],
+  },
+  {
+    slug: "comparador-de-investimentos",
+    name: "CDB, LCI, Tesouro ou poupança?",
+    short: "Compare quanto cada investimento rende, já com IR.",
+    description:
+      "Compare o rendimento líquido de CDB, LCI/LCA, Tesouro Selic e poupança com Selic e CDI atualizados e o imposto de renda regressivo.",
+    category: "financas",
+    icon: "Coins",
+    status: "live",
+    featured: true,
+    keywords: ["cdb", "lci", "lca", "tesouro selic", "poupanca", "comparar investimentos", "quanto rende", "renda fixa", "cdi"],
+  },
+  {
+    slug: "reserva-de-emergencia",
+    name: "Reserva de emergência",
+    short: "Descubra quanto guardar e em quanto tempo chega lá.",
+    description:
+      "Calcule o valor ideal da sua reserva de emergência pelo seu custo de vida e tipo de renda, e quanto tempo leva para completá-la.",
+    category: "financas",
+    icon: "LifeBuoy",
+    status: "live",
+    keywords: ["reserva de emergencia", "fundo de emergencia", "quanto guardar", "colchao financeiro"],
+  },
+  {
+    slug: "orcamento-50-30-20",
+    name: "Orçamento 50/30/20",
+    short: "Divida sua renda entre necessidades, desejos e futuro.",
+    description:
+      "Monte seu orçamento pela regra 50/30/20 e compare com seus gastos atuais para saber onde ajustar.",
+    category: "financas",
+    icon: "PieChart",
+    status: "live",
+    keywords: ["orcamento", "50 30 20", "regra 50 30 20", "organizar financas", "planilha de gastos", "controle financeiro"],
+  },
+  {
+    slug: "juros-do-parcelamento",
+    name: "Descubra os juros do parcelamento",
+    short: "Veja a taxa de juros real escondida nas parcelas.",
+    description:
+      "Informe o preço à vista e as parcelas e descubra a taxa de juros mensal e anual embutida no parcelamento ou empréstimo.",
+    category: "financas",
+    icon: "SearchCheck",
+    status: "live",
+    keywords: ["juros embutidos", "taxa de juros parcelamento", "descobrir taxa de juros", "parcelado com juros", "juros emprestimo", "cet"],
+  },
+  {
+    slug: "calculadora-de-porcentagem",
+    name: "Calculadora de porcentagem",
+    short: "Porcentagem, desconto, aumento e variação.",
+    description:
+      "Calcule X% de um valor, quanto um número representa em %, aumentos, descontos e variação percentual entre dois valores.",
+    category: "financas",
+    icon: "Percent",
+    status: "live",
+    keywords: ["porcentagem", "calcular porcentagem", "desconto", "aumento percentual", "variacao percentual", "quanto e x por cento"],
+  },
+  {
+    slug: "viver-de-renda",
+    name: "Quanto preciso para viver de renda?",
+    short: "Calcule o patrimônio da sua independência financeira.",
+    description:
+      "Descubra quanto patrimônio você precisa para viver de renda (regra dos 4%) e em quanto tempo chega lá com seus aportes.",
+    category: "financas",
+    icon: "Palmtree",
+    status: "live",
+    keywords: ["viver de renda", "independencia financeira", "regra dos 4", "aposentadoria", "primeiro milhao", "fire"],
   },
 
   // ---------------- Trabalhista ----------------
@@ -337,18 +416,6 @@ export const SERVICES: Service[] = [
     icon: "CalendarDays",
     status: "live",
     keywords: ["feriados", "feriado nacional", "calendario", "ponto facultativo"],
-  },
-  {
-    slug: "diagnostico-veiculo",
-    name: "Diagnóstico de veículo",
-    short: "Consulte os dados de um carro pela placa — grátis. Relatório completo em breve.",
-    description:
-      "Digite a placa e veja os dados do veículo (marca, modelo, ano, cor, tipo, cidade) de graça. Em breve, o relatório completo com roubo/furto, débitos e situação. Dados públicos, sem informações do proprietário.",
-    category: "consultas",
-    icon: "ShieldCheck",
-    status: "live",
-    featured: true,
-    keywords: ["consulta placa", "diagnostico veiculo", "carro roubado", "veiculo roubado", "sinistro", "debitos do carro", "situacao do veiculo", "consultar placa"],
   },
   {
     slug: "consulta-fipe",

@@ -1,35 +1,53 @@
 /**
  * Regras e tabelas brasileiras (INSS, IRRF, documentos, Pix).
- * As tabelas de imposto são de 2025 — atualize os valores abaixo quando
+ * As tabelas de imposto são de 2026 — atualize os valores abaixo quando
  * o governo publicar as tabelas do ano vigente.
  */
 
 // ----------------------------------------------------------------------------
-// Tabelas 2025 (fáceis de atualizar)
+// Tabelas 2026 (fáceis de atualizar)
 // ----------------------------------------------------------------------------
 
-export const TABELA_ANO = 2025;
+export const TABELA_ANO = 2026;
 
-/** INSS — alíquotas progressivas por faixa (2025). */
+/** Salário mínimo nacional vigente (base do DAS-MEI e da 1ª faixa do INSS). */
+export const SALARIO_MINIMO = 1621.0;
+
+/** INSS — alíquotas progressivas por faixa (2026). */
 export const INSS_FAIXAS = [
-  { ate: 1518.0, aliquota: 0.075 },
-  { ate: 2793.88, aliquota: 0.09 },
-  { ate: 4190.83, aliquota: 0.12 },
-  { ate: 8157.41, aliquota: 0.14 },
+  { ate: 1621.0, aliquota: 0.075 },
+  { ate: 2902.84, aliquota: 0.09 },
+  { ate: 4354.27, aliquota: 0.12 },
+  { ate: 8475.55, aliquota: 0.14 },
 ];
-export const INSS_TETO = 8157.41;
+export const INSS_TETO = 8475.55;
 
-/** IRRF — tabela mensal progressiva (2025). */
+/** IRRF — tabela mensal progressiva (vigente desde maio/2025, mantida em 2026). */
 export const IRRF_FAIXAS = [
-  { ate: 2259.2, aliquota: 0, deducao: 0 },
-  { ate: 2826.65, aliquota: 0.075, deducao: 169.44 },
-  { ate: 3751.05, aliquota: 0.15, deducao: 381.44 },
-  { ate: 4664.68, aliquota: 0.225, deducao: 662.77 },
-  { ate: Infinity, aliquota: 0.275, deducao: 896.0 },
+  { ate: 2428.8, aliquota: 0, deducao: 0 },
+  { ate: 2826.65, aliquota: 0.075, deducao: 182.16 },
+  { ate: 3751.05, aliquota: 0.15, deducao: 394.16 },
+  { ate: 4664.68, aliquota: 0.225, deducao: 675.49 },
+  { ate: Infinity, aliquota: 0.275, deducao: 908.73 },
 ];
 export const IRRF_DEDUCAO_DEPENDENTE = 189.59;
-/** Desconto simplificado mensal (opção do contribuinte). */
-export const IRRF_DESCONTO_SIMPLIFICADO = 564.8;
+/** Desconto simplificado mensal (substitui INSS e demais deduções). */
+export const IRRF_DESCONTO_SIMPLIFICADO = 607.2;
+
+/**
+ * Redução do IRRF da Lei 15.270/2025 (a partir de jan/2026), calculada sobre o
+ * rendimento tributável BRUTO do mês:
+ * - até R$ 5.000,00: redução de até R$ 312,89 (zera o imposto);
+ * - de R$ 5.000,01 a R$ 7.350,00: redução = 978,62 − 0,133145 × rendimento;
+ * - acima de R$ 7.350,00: sem redução.
+ */
+export const IRRF_REDUCAO = {
+  limiteIsencao: 5000,
+  reducaoMaxima: 312.89,
+  limiteParcial: 7350,
+  constante: 978.62,
+  fator: 0.133145,
+};
 
 // ----------------------------------------------------------------------------
 // Cálculos
@@ -53,7 +71,7 @@ export function calcINSS(salario: number): { valor: number; aliquotaEfetiva: num
   };
 }
 
-/** IRRF sobre uma base já líquida de INSS e deduções. */
+/** IRRF pela tabela progressiva, sobre uma base já líquida de deduções. */
 export function calcIRRF(base: number): {
   valor: number;
   aliquota: number;
@@ -70,14 +88,70 @@ export function calcIRRF(base: number): {
   return { valor: 0, aliquota: 0, faixa: 0 };
 }
 
+/** Redução da Lei 15.270/2025, limitada ao imposto calculado pela tabela. */
+export function calcReducaoIRRF(rendimentoBruto: number, impostoTabela: number): number {
+  const r = IRRF_REDUCAO;
+  let reducao = 0;
+  if (rendimentoBruto <= r.limiteIsencao) reducao = r.reducaoMaxima;
+  else if (rendimentoBruto <= r.limiteParcial)
+    reducao = r.constante - r.fator * rendimentoBruto;
+  return round2(Math.max(0, Math.min(impostoTabela, reducao)));
+}
+
+export interface IRRFResultado {
+  /** base de cálculo usada (após deduções ou desconto simplificado) */
+  base: number;
+  /** imposto pela tabela progressiva, antes da redução */
+  impostoTabela: number;
+  /** redução da Lei 15.270/2025 */
+  reducao: number;
+  /** imposto final a reter */
+  valor: number;
+  aliquota: number;
+  simplificado: boolean;
+}
+
+/**
+ * IRRF de 2026: compara deduções legais × desconto simplificado (fica com o
+ * menor imposto), aplica a tabela e depois a redução sobre o rendimento bruto.
+ */
+export function calcIRRFCompleto(params: {
+  rendimento: number;
+  inss?: number;
+  dependentes?: number;
+  permitirSimplificado?: boolean;
+}): IRRFResultado {
+  const { rendimento, inss = 0, dependentes = 0, permitirSimplificado = true } = params;
+  const baseCompleta = Math.max(0, rendimento - inss - dependentes * IRRF_DEDUCAO_DEPENDENTE);
+  const baseSimplificada = Math.max(0, rendimento - IRRF_DESCONTO_SIMPLIFICADO);
+
+  const tCompleta = calcIRRF(baseCompleta);
+  const tSimpl = calcIRRF(baseSimplificada);
+  const simplificado = permitirSimplificado && tSimpl.valor < tCompleta.valor;
+  const tabela = simplificado ? tSimpl : tCompleta;
+
+  const reducao = calcReducaoIRRF(rendimento, tabela.valor);
+  return {
+    base: round2(simplificado ? baseSimplificada : baseCompleta),
+    impostoTabela: tabela.valor,
+    reducao,
+    valor: round2(tabela.valor - reducao),
+    aliquota: tabela.aliquota,
+    simplificado,
+  };
+}
+
 export interface SalarioResultado {
   bruto: number;
   inss: number;
   irrf: number;
+  irrfTabela: number;
+  reducaoIRRF: number;
   baseIRRF: number;
   outrosDescontos: number;
   liquido: number;
   aliquotaIRRF: number;
+  simplificado: boolean;
 }
 
 /** Salário líquido: bruto − INSS − IRRF − outros descontos. */
@@ -90,31 +164,25 @@ export function calcSalarioLiquido(params: {
   const { bruto, dependentes = 0, outrosDescontos = 0, usarSimplificado = true } =
     params;
   const inss = calcINSS(bruto).valor;
-
-  // Duas formas de apurar a base do IRRF; o contribuinte usa a que paga menos.
-  const deducaoDependentes = dependentes * IRRF_DEDUCAO_DEPENDENTE;
-  const baseCompleta = Math.max(0, bruto - inss - deducaoDependentes);
-  const baseSimplificada = Math.max(0, bruto - IRRF_DESCONTO_SIMPLIFICADO);
-
-  const irrfCompleta = calcIRRF(baseCompleta);
-  const irrfSimplificada = calcIRRF(baseSimplificada);
-
-  // Se permitido, escolhe automaticamente a opção de menor imposto.
-  const usarSimpl =
-    usarSimplificado && irrfSimplificada.valor <= irrfCompleta.valor;
-  const irrf = usarSimpl ? irrfSimplificada : irrfCompleta;
-  const baseFinal = usarSimpl ? baseSimplificada : baseCompleta;
-
-  const liquido = bruto - inss - irrf.valor - outrosDescontos;
+  const ir = calcIRRFCompleto({
+    rendimento: bruto,
+    inss,
+    dependentes,
+    permitirSimplificado: usarSimplificado,
+  });
+  const liquido = bruto - inss - ir.valor - outrosDescontos;
 
   return {
     bruto: round2(bruto),
     inss,
-    irrf: irrf.valor,
-    baseIRRF: round2(baseFinal),
+    irrf: ir.valor,
+    irrfTabela: ir.impostoTabela,
+    reducaoIRRF: ir.reducao,
+    baseIRRF: ir.base,
     outrosDescontos: round2(outrosDescontos),
     liquido: round2(liquido),
-    aliquotaIRRF: irrf.aliquota,
+    aliquotaIRRF: ir.aliquota,
+    simplificado: ir.simplificado,
   };
 }
 

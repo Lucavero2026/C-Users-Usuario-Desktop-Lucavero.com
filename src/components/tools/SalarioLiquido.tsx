@@ -35,7 +35,7 @@ export default function SalarioLiquido() {
         <Field label="Salário bruto mensal" hint="Valor total antes dos descontos.">
           <Input
             inputMode="decimal"
-            placeholder="Ex.: 4.500,00"
+            placeholder="Ex.: 6.000,00"
             value={bruto}
             onChange={(e) => setBruto(e.target.value)}
           />
@@ -73,9 +73,15 @@ export default function SalarioLiquido() {
             <Row label="Salário bruto" value={formatBRL(res.bruto)} />
             <Row label="INSS" value={`− ${formatBRL(res.inss)}`} />
             <Row
-              label={`IRRF (${formatPercent(res.aliquotaIRRF, 1)})`}
+              label={`IRRF (faixa de ${formatPercent(res.aliquotaIRRF, 1)})`}
               value={`− ${formatBRL(res.irrf)}`}
             />
+            {res.reducaoIRRF > 0 && (
+              <p className="-mt-0.5 mb-1 text-right text-xs text-emerald-700 dark:text-emerald-400">
+                Já com a redução de {formatBRL(res.reducaoIRRF)} da Lei 15.270/2025
+                {res.irrf === 0 ? " — isento!" : ""}
+              </p>
+            )}
             {res.outrosDescontos > 0 && (
               <Row
                 label="Outros descontos"
@@ -84,7 +90,8 @@ export default function SalarioLiquido() {
             )}
             <Row label="Líquido" value={formatBRL(res.liquido)} strong />
             <p className="mt-3 text-xs text-muted">
-              Tabelas de INSS e IRRF de {TABELA_ANO}. O IRRF usa automaticamente o
+              Tabelas de INSS e IRRF de {TABELA_ANO}, com a isenção de IR para quem
+              ganha até R$ 5.000 (Lei 15.270/2025). O IRRF usa automaticamente o
               desconto (simplificado ou por dependentes) mais vantajoso. Estimativa.
             </p>
           </ResultBox>

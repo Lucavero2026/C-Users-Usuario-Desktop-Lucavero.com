@@ -1,52 +1,57 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { SORTED_POSTS } from "@/lib/blog";
+import { BlogListing } from "@/components/blog/BlogListing";
+import { JsonLd } from "@/components/JsonLd";
+import { getPublishedPosts } from "@/lib/blog";
+import { BLOG_INTRO, BLOG_TITLE } from "@/lib/blog-shared";
+import { SITE } from "@/lib/site";
+
+// Revalida de hora em hora: artigos agendados aparecem sozinhos no horário.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description:
-    "Guias práticos sobre como usar as ferramentas do Lucavero e como acessar programas sociais e direitos no Brasil.",
-  alternates: { canonical: "/blog" },
+  title: BLOG_TITLE,
+  description: BLOG_INTRO,
+  alternates: {
+    canonical: "/blog",
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
+  openGraph: {
+    title: `${BLOG_TITLE} · Lucavero`,
+    description: BLOG_INTRO,
+    type: "website",
+    url: "/blog",
+  },
 };
 
-function fmt(date: string) {
-  return new Date(date + "T00:00:00").toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getPublishedPosts();
   return (
-    <div className="container-page py-10">
-      <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight">Blog</h1>
-        <p className="mt-2 max-w-2xl text-muted">
-          Guias diretos ao ponto: como usar as ferramentas do site e como acessar
-          programas sociais e seus direitos.
-        </p>
-      </header>
-
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {SORTED_POSTS.map((p) => (
-          <Link
-            key={p.slug}
-            href={`/blog/${p.slug}`}
-            className="focus-ring card group flex flex-col p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <span className="text-3xl">{p.emoji}</span>
-            <span className="mt-3 inline-flex w-fit rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
-              {p.tag}
-            </span>
-            <h2 className="mt-2 text-lg font-bold leading-snug group-hover:text-brand">
-              {p.title}
-            </h2>
-            <p className="mt-1 flex-1 text-sm text-muted">{p.description}</p>
-            <span className="mt-4 text-xs text-muted">{fmt(p.date)}</span>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: `${BLOG_TITLE} · ${SITE.name}`,
+          description: BLOG_INTRO,
+          url: `${SITE.url}/blog`,
+          inLanguage: "pt-BR",
+          publisher: { "@type": "Organization", name: SITE.name, url: SITE.url },
+          blogPost: posts.slice(0, 12).map((p) => ({
+            "@type": "BlogPosting",
+            headline: p.title,
+            url: `${SITE.url}/blog/${p.slug}`,
+            datePublished: p.date,
+          })),
+        }}
+      />
+      <BlogListing
+        posts={posts}
+        page={1}
+        basePath="/blog"
+        title={BLOG_TITLE}
+        intro={BLOG_INTRO}
+        showFeatured
+      />
+    </>
   );
 }

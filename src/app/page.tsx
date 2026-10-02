@@ -9,13 +9,13 @@ import {
   getCategory,
   servicesByCategory,
 } from "@/lib/services";
-import { SORTED_POSTS } from "@/lib/blog";
-import { VeiculoSpotlight } from "@/components/VeiculoSpotlight";
+import { getPublishedPosts } from "@/lib/blog";
+import { PostCard } from "@/components/blog/BlogListing";
 
-// Destaques (sem o diagnóstico de veículo, que tem seu próprio quadro no topo).
-const FEATURED = SERVICES.filter(
-  (s) => s.featured && s.status === "live" && s.slug !== "diagnostico-veiculo",
-);
+// Revalida de hora em hora para mostrar os artigos mais recentes do blog.
+export const revalidate = 3600;
+
+const FEATURED = SERVICES.filter((s) => s.featured && s.status === "live");
 
 const CHIPS = [
   { label: "Salário líquido", slug: "salario-liquido" },
@@ -25,8 +25,9 @@ const CHIPS = [
   { label: "Link do WhatsApp", slug: "link-whatsapp" },
 ];
 
-export default function Home() {
+export default async function Home() {
   const featured = LIVE_SERVICES.slice(0, 8);
+  const posts = (await getPublishedPosts()).slice(0, 3);
 
   return (
     <div>
@@ -66,9 +67,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* CARRO-CHEFE — diagnóstico de veículo em primeiro lugar */}
-      <VeiculoSpotlight />
 
       {/* DESTAQUES — serviços de maior tráfego, com visual próprio */}
       <section className="container-page pt-4 pb-2">
@@ -244,7 +242,7 @@ export default function Home() {
             <div>
               <h2 className="text-2xl font-bold tracking-tight">Do nosso blog</h2>
               <p className="text-sm text-muted">
-                Guias de como usar as ferramentas e acessar seus direitos.
+                Artigos diários sobre finanças, impostos, trabalho e direitos.
               </p>
             </div>
             <Link
@@ -255,21 +253,8 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {SORTED_POSTS.slice(0, 3).map((p) => (
-              <Link
-                key={p.slug}
-                href={`/blog/${p.slug}`}
-                className="focus-ring card group flex flex-col p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <span className="text-3xl">{p.emoji}</span>
-                <span className="mt-3 inline-flex w-fit rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
-                  {p.tag}
-                </span>
-                <h3 className="mt-2 font-bold leading-snug group-hover:text-brand">
-                  {p.title}
-                </h3>
-                <p className="mt-1 flex-1 text-sm text-muted">{p.description}</p>
-              </Link>
+            {posts.map((p) => (
+              <PostCard key={p.slug} post={p} headingLevel="h3" />
             ))}
           </div>
         </div>

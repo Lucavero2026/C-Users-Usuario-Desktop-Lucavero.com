@@ -1,9 +1,13 @@
 import type { MetadataRoute } from "next";
 import { CATEGORIES, SERVICES } from "@/lib/services";
-import { SORTED_POSTS } from "@/lib/blog";
+import { getPublishedPosts } from "@/lib/blog";
+import { BLOG_CATEGORIES } from "@/lib/blog-shared";
 import { SITE } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+// Atualiza de hora em hora (inclui artigos agendados que entraram no ar).
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const staticPages = [
     "",
@@ -29,19 +33,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  const ferramentas = SERVICES.map((s) => ({
+  const ferramentas = SERVICES.filter((s) => s.status === "live").map((s) => ({
     url: `${SITE.url}/ferramentas/${s.slug}`,
     lastModified: now,
     changeFrequency: "monthly" as const,
-    priority: s.status === "live" ? 0.8 : 0.4,
+    priority: 0.8,
   }));
 
-  const artigos = SORTED_POSTS.map((p) => ({
+  const posts = await getPublishedPosts();
+  const artigos = posts.map((p) => ({
     url: `${SITE.url}/blog/${p.slug}`,
-    lastModified: new Date(p.date),
-    changeFrequency: "monthly" as const,
+    lastModified: new Date(p.updated || p.date),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+    ...(p.cover ? { images: [new URL(p.cover, SITE.url).toString()] } : {}),
+  }));
+
+  const categoriasBlog = BLOG_CATEGORIES.map((c) => ({
+    url: `${SITE.url}/blog/categoria/${c.id}`,
+    lastModified: posts.find((p) => p.category === c.id)?.date
+      ? new Date(posts.find((p) => p.category === c.id)!.date)
+      : now,
+    changeFrequency: "daily" as const,
     priority: 0.6,
   }));
 
-  return [...staticPages, ...categorias, ...ferramentas, ...artigos];
+  return [...staticPages, ...categorias, ...ferramentas, ...categoriasBlog, ...artigos];
 }

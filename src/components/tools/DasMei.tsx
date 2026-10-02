@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { Button, Field, Input, ResultBox, Row, Select } from "@/components/ui";
-import { round2 } from "@/lib/br";
+import { round2, SALARIO_MINIMO, TABELA_ANO } from "@/lib/br";
 import { formatBRL, parseNumber } from "@/lib/format";
 
-// Valores do DAS-MEI 2025 (INSS 5% do salário mínimo de R$ 1.518 = R$ 75,90).
-const ANO = 2025;
+// DAS-MEI = 5% do salário mínimo (INSS) + R$ 1 de ICMS e/ou R$ 5 de ISS.
+// 2026: 5% de R$ 1.621 = R$ 81,05.
+const ANO = TABELA_ANO;
+const INSS_MEI = round2(SALARIO_MINIMO * 0.05);
 const VALORES: Record<string, { label: string; valor: number }> = {
-  comercio: { label: "Comércio ou Indústria (INSS + ICMS)", valor: 76.9 },
-  servicos: { label: "Serviços (INSS + ISS)", valor: 80.9 },
-  ambos: { label: "Comércio e Serviços (INSS + ICMS + ISS)", valor: 81.9 },
+  comercio: { label: "Comércio ou Indústria (INSS + ICMS)", valor: round2(INSS_MEI + 1) },
+  servicos: { label: "Serviços (INSS + ISS)", valor: round2(INSS_MEI + 5) },
+  ambos: { label: "Comércio e Serviços (INSS + ICMS + ISS)", valor: round2(INSS_MEI + 6) },
 };
 
 export default function DasMei() {
