@@ -1,17 +1,29 @@
 ---
 title: "Programas sociais do Brasil: veja quem tem direito, benefícios e como participar"
-description: "Bolsa Família, BPC, Gás do Povo, Pé-de-Meia, Minha Casa Minha Vida e outros: conheça os principais programas sociais em vigor no Brasil em 2026, quem pode receber e como ter acesso."
+description: Conheça os principais programas sociais em vigor no Brasil em 2026, quem pode receber e como ter acesso.
 date: 2026-10-02T11:32:00-03:00
-category: financas
-tags: []
+updated: 2026-10-02T16:25:19.753Z
+category: programas-sociais
+tags:
+  - programas sociais
+  - programas sociais do governo
+  - benefícios do governo
+  - bolsa família 2026
+  - cadastro único
+  - cadúnico 2026
+  - quem tem direito ao bolsa família
+  - benefícios para baixa renda
+  - programas do governo federal
+  - bpc loas
+  - auxílio gás 2026
+  - gás do povo
 emoji: 💰
+cover: /blog/img/2026/atendimento-solidario-comunitario-cc78dc.webp
 related: []
 status: publicado
 seoTitle: "Programas sociais no Brasil: Veja quais são e para que servem"
 keyword: programas
 ---
-
-![Programa sociais](/blog/img/2026/atendimento-solidario-comunitario-aba76d.webp)
 
 O Brasil mantém uma extensa rede de proteção social que reúne transferência direta de renda, descontos em serviços essenciais, alimentação, moradia, educação, acesso à saúde, qualificação profissional, inclusão produtiva e apoio a públicos específicos. Embora Bolsa Família e Benefício de Prestação Continuada (BPC) estejam entre os mais conhecidos, o conjunto de políticas disponíveis é muito maior e alcança diferentes etapas da vida das famílias.
 
@@ -129,7 +141,7 @@ A autorização pode ser emitida pelo aplicativo Meu SUS Digital. Depois, o docu
 
 CRAS, CREAS, unidades de saúde, Centros POP e outros equipamentos públicos podem ajudar pessoas com dificuldades para emitir a autorização.
 
-Programa Nacional de Alimentação Escolar
+### Programa Nacional de Alimentação Escolar
 
 O Programa Nacional de Alimentação Escolar, o PNAE, financia a oferta de alimentação aos estudantes da educação básica pública e integra a rede brasileira de segurança alimentar.
 
@@ -401,4 +413,4 @@ Uma mesma família pode, portanto, participar simultaneamente de diferentes pol�
 
 Em 2026, o Cadastro Único continua sendo o principal elo entre boa parte dessas iniciativas. Manter os dados corretos e procurar os canais oficiais é a forma mais segura de descobrir quais benefícios estão disponíveis e evitar que direitos deixem de ser acessados por falta de informação.
 
-programas sociais, programas sociais do governo, benefícios do governo, bolsa família 2026, cadastro único, cadúnico 2026, quem tem direito ao bolsa família, benefícios para baixa renda, programas do governo federal, bpc loas, auxílio gás 2026, gás do povo, pé-de-meia, minha casa minha vida 2026, tarifa social de energia, luz do povo, tarifa social de água, farmácia popular, fies social, benefícios cadúnico
+programas sociais, programas sociais do governo, benefícios do governo, bolsa família 2026, cadastro único, cadúnico 2026, quem tem direito ao bolsa família, benefícios para baixa renda, programas do governo federal, bpc loas, auxílio gás 2026, gás do povo, pé-de-meia, minha casa minha vida 2026, tarifa social de energia, luz do povo, tarifa social de água, farmácia popular, fies social, benefícios cadúnico,
