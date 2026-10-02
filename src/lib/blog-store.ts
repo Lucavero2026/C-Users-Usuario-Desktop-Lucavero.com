@@ -29,12 +29,13 @@ export function storeMode(): "github" | "local" | "readonly" {
 // GitHub (API de conteúdo)
 // ---------------------------------------------------------------------------
 
-function gh(pathInRepo: string, init?: RequestInit) {
+function gh(pathInRepo: string, init?: RequestInit, query = "") {
   const repo = process.env.GITHUB_REPO;
+  // Só os segmentos do caminho são codificados; a query (?ref=...) vai à parte.
   const url = `https://api.github.com/repos/${repo}/contents/${pathInRepo
     .split("/")
     .map(encodeURIComponent)
-    .join("/")}`;
+    .join("/")}${query}`;
   return fetch(url, {
     ...init,
     cache: "no-store",
@@ -50,7 +51,7 @@ function gh(pathInRepo: string, init?: RequestInit) {
 const branch = () => process.env.GITHUB_BRANCH || "main";
 
 async function ghGet(pathInRepo: string): Promise<{ sha: string; content: string } | null> {
-  const r = await gh(`${pathInRepo}?ref=${encodeURIComponent(branch())}`);
+  const r = await gh(pathInRepo, undefined, `?ref=${encodeURIComponent(branch())}`);
   if (r.status === 404) return null;
   if (!r.ok) throw new Error(`GitHub respondeu ${r.status} ao ler ${pathInRepo}.`);
   const data = (await r.json()) as { sha: string; content: string };
@@ -58,7 +59,7 @@ async function ghGet(pathInRepo: string): Promise<{ sha: string; content: string
 }
 
 async function ghPut(pathInRepo: string, base64: string, message: string) {
-  const current = await ghGet(pathInRepo).catch(() => null);
+  const current = await ghGet(pathInRepo);
   const r = await gh(pathInRepo, {
     method: "PUT",
     body: JSON.stringify({
@@ -76,7 +77,7 @@ async function ghPut(pathInRepo: string, base64: string, message: string) {
 
 async function ghDelete(pathInRepo: string, message: string) {
   const current = await ghGet(pathInRepo);
-  if (!current) return;
+  if (!current) throw new Error("Arquivo não encontrado no GitHub.");
   const r = await gh(pathInRepo, {
     method: "DELETE",
     body: JSON.stringify({ message, sha: current.sha, branch: branch() }),
